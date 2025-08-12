@@ -1,0 +1,34 @@
+{
+    "name": "dagasmart/trade",
+    "alias": "支付交易",
+    "description": "Description...",
+    "type": "library",
+    "version": "1.0.0",
+    "keywords": ["bizadmin", "extension"],
+    "homepage": "https://github.com/dagasmart/trade",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "大圭智科",
+            "email": "dagasmart@163.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "dagasmart/bizadmin": "*",
+        "yansongda/pay": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "DagaSmart\\Trade\\": "src/"
+        }
+    },
+    "extra": {
+        "bizadmin": "DagaSmart\\Trade\\TradeServiceProvider",
+        "laravel": {
+            "providers": [
+                "DagaSmart\\Trade\\TradeServiceProvider"
+            ]
+        }
+    }
+}
