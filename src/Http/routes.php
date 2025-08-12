@@ -11,8 +11,14 @@ Route::group([
     'prefix'     => 'trade',
     //'middleware' => 'trade',
 ], function (Router $router) {
+    //交易流水
+    $router->resource('record', Controllers\RecordController::class);
+    //账单结算
+    $router->resource('settle', Controllers\SettleController::class);
+    //交易分析
+    $router->resource('stat', Controllers\StatController::class);
+    //支付设置
     $router->resource('settings', Controllers\SettingController::class);
-    Route::resource('stat', Controllers\StatController::class);
 });
 
 //免登录无限制
