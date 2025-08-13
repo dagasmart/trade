@@ -21,6 +21,8 @@ Route::group([
     $router->resource('settings', Controllers\SettingController::class);
     //识别终端
     Route::get('payment/detect/{source}/{order_no}', [Controllers\PaymentController::class, 'detect']);
+    //订单付款
+    Route::get('payment/order/{order_no}', [Controllers\PaymentController::class, 'order']);
 });
 
 //免登录无限制

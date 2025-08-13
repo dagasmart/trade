@@ -27,20 +27,29 @@ class PaymentController extends AdminController
      */
     public function detect(Request $request): JsonResponse
     {
-        //判断扫描二维码的APP为 QQ
-        if(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')){
-            $trade_channel = 'QQ';
-            //判断扫描二维码的APP为 支付宝
-        }ELSE IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')){
-            $trade_channel = '支付宝';
-            //判断扫描二维码的APP为 微信
-        }ELSE IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')){
-            $trade_channel = '微信';
-        } else {
-            $trade_channel = null;
+        //判断扫描二维码的APP
+        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
+            $request['trade_channel'] = 'qq';
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')) {
+            $request['trade_channel'] = 'alipay';
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')) {
+            $request['trade_channel'] = 'wechat';
+        } ELSE {
+            $request['trade_channel'] = null;
         }
 
-        admin_abort($trade_channel);
+        return $this->service->detect($request);
+    }
+
+
+    /**
+     * 识别扫码终端
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function order(Request $request): JsonResponse
+    {
+        return $this->service->order($request);
 
     }
 
