@@ -11,9 +11,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentController extends AdminController
 {
+
     protected string $serviceName = PaymentService::class;
 
-    public function index()
+
+    public function handle(Request $request)
+    {
+
+    }
+
+    /**
+     * 识别扫码终端
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function detect(Request $request): JsonResponse
     {
         //判断扫描二维码的APP为 QQ
         if(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')){
@@ -30,7 +42,6 @@ class PaymentController extends AdminController
 
         admin_abort($trade_channel);
 
-
-
     }
+
 }
