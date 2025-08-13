@@ -4,6 +4,7 @@ namespace DagaSmart\Trade;
 
 use DagaSmart\BizAdmin\Renderers\TextControl;
 use DagaSmart\BizAdmin\Extend\ServiceProvider;
+use Exception;
 
 class TradeServiceProvider extends ServiceProvider
 {
@@ -51,4 +52,21 @@ class TradeServiceProvider extends ServiceProvider
             TextControl::make()->name('value')->label('Value')->required(true),
 	    ]);
 	}
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function register(): void
+    {
+        parent::register();
+
+        /**加载路由**/
+        parent::registerRoutes(__DIR__.'/Http/routes.php');
+        /**加载语言包**/
+        if ($lang = parent::getLangPath()) {
+            $this->loadTranslationsFrom($lang, $this->getCode());
+        }
+    }
+
 }

@@ -19,8 +19,6 @@ Route::group([
     $router->resource('stat', Controllers\StatController::class);
     //支付设置
     $router->resource('settings', Controllers\SettingController::class);
-    //识别终端
-    Route::get('payment/detect/{source}/{order_no}', [Controllers\PaymentController::class, 'detect']);
     //订单付款
     Route::get('payment/order/{order_no}', [Controllers\PaymentController::class, 'order']);
 });
@@ -32,6 +30,7 @@ Route::group([
 ], function (Router $router) {
     $router->get('_iconify_search', [\DagaSmart\BizAdmin\Controllers\IndexController::class, 'iconifySearch']);
 
-    Route::get('trade', [Controllers\TradeController::class, 'index']);
+    //识别终端
+    Route::get('payment/detect/{source}/{order_no}', [Controllers\PaymentController::class, 'detect']);
 
 });
