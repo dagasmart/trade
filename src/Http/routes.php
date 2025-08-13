@@ -1,5 +1,7 @@
 <?php
 
+use DagaSmart\BizAdmin\Middleware\Authenticate;
+use DagaSmart\BizAdmin\Middleware\Permission;
 use Illuminate\Routing\Router;
 use DagaSmart\Trade\Http\Controllers;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'domain'     => config('admin.route.domain'),
     'prefix'     => 'trade',
-    //'middleware' => 'trade',
+    'middleware' => [Authenticate::class],
 ], function (Router $router) {
     //交易流水
     $router->resource('record', Controllers\RecordController::class);
@@ -19,8 +21,10 @@ Route::group([
     $router->resource('stat', Controllers\StatController::class);
     //支付设置
     $router->resource('settings', Controllers\SettingController::class);
+    //识别终端/生成订单
+    Route::get('payment/detect/{source}/{order_no}', [Controllers\PaymentController::class, 'detect'])->withoutMiddleware([Authenticate::class, Permission::class]);
     //订单付款
-    Route::get('payment/order/{order_no}', [Controllers\PaymentController::class, 'order']);
+    Route::get('payment/order/{order_no}', [Controllers\PaymentController::class, 'order'])->withoutMiddleware([Authenticate::class, Permission::class]);
 });
 
 //免登录无限制
@@ -30,7 +34,6 @@ Route::group([
 ], function (Router $router) {
     $router->get('_iconify_search', [\DagaSmart\BizAdmin\Controllers\IndexController::class, 'iconifySearch']);
 
-    //识别终端
-    Route::get('payment/detect/{source}/{order_no}', [Controllers\PaymentController::class, 'detect']);
+    Route::get('trade', [Controllers\TradeController::class, 'index']);
 
 });

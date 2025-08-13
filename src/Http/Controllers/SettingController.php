@@ -35,7 +35,7 @@ class SettingController extends AdminController
         return $this->baseForm(false)
             ->redirect('')
             ->api($this->getStorePath())
-            ->initApi('/system/settings?_action=getData')
+            ->initApi(admin_url('trade/settings?_action=getData'))
             ->body(
                 amis()->Tabs()->name('settings')->tabs([
 //                    amis()->Tab()->title('基本设置')->body([
