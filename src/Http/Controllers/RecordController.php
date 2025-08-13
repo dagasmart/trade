@@ -3,7 +3,7 @@
 namespace DagaSmart\Trade\Http\Controllers;
 
 use DagaSmart\BizAdmin\Controllers\AdminController;
-use DagaSmart\Trade\Services\StatService;
+use DagaSmart\Trade\Services\RecordService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class RecordController extends AdminController
 {
-    protected string $serviceName = StatService::class;
+    protected string $serviceName = RecordService::class;
 
     public function index(): JsonResponse|JsonResource
     {
