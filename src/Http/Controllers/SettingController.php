@@ -151,6 +151,10 @@ class SettingController extends AdminController
                                                 ->description('选填，app移动终端的 app_id')
                                                 ->size('lg'),
                                         ]),
+                                    ])->toolbar([
+                                        amis()->SwitchControl('payment.wechat.default.switch')
+                                            ->onText('开启')
+                                            ->offText('关闭'),
                                     ]),
                                 ]),
                             ])->className(['p-10' => true]),
