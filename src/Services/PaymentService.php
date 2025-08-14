@@ -21,9 +21,9 @@ class PaymentService extends AdminService
         if ($request['trade_channel'] == 'alipay') {
             return Pay::alipay()->h5([
                 'out_trade_no' => time(),
-                'total_amount' => '0.01',
-                'subject' => 'yansongda 测试 - 01',
-                'quit_url' => 'https://yansongda.cn',
+                'total_amount' => '0.05',
+                'subject' => 'dagasmart 测试 - 01',
+                'quit_url' => 'https://bus.dagasmart.com',
             ]);
         } else if ($request['trade_channel'] == 'wechat') {
             return Pay::wechat()->h5([

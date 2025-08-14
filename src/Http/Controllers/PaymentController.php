@@ -20,7 +20,7 @@ class PaymentController extends AdminController
      * @param Request $request
      * @return JsonResponse
      */
-    public function detect(Request $request): JsonResponse
+    public function detect(Request $request)
     {
         $data = [];
         $data['source'] = $request->source;
@@ -35,13 +35,9 @@ class PaymentController extends AdminController
         } ELSE {
             admin_abort('无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
         }
-        $data['trade_channel'] = $trade_channel;
+        $data['trade_channel'] = $trade_channel ?? null;
 
-        $res = $this->service->detect($data);
-        if (!$res) {
-            return $this->response()->success($res,'成功');
-        }
-        return $this->response()->fail('失败');
+        return $this->service->detect($data);
     }
 
 
