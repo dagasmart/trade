@@ -14,14 +14,10 @@ class PaymentService extends AdminService
 {
     protected string $modelName = Payment::class;
 
-    public function handle(Pay $pay)
-    {
-        Pay::config(config('pay'));
-    }
-
 
     public function detect($request)
     {
+        Pay::config(config('pay'));
         if ($request['trade_channel'] == 'alipay') {
             return Pay::alipay()->h5([
                 'out_trade_no' => time(),
