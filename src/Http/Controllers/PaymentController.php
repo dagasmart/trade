@@ -22,19 +22,26 @@ class PaymentController extends AdminController
      */
     public function detect(Request $request): JsonResponse
     {
-        return $this->response()->successMessage('2341234333');
+        $data = [];
+        $data['source'] = $request->source;
+        $data['order_no'] = $request->order_no;
         //判断扫描二维码的APP为 QQ
-//        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
-//            $request['trade_channel'] = 'qq';
-//        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')) {
-//            $request['trade_channel'] = 'alipay';
-//        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')) {
-//            $request['trade_channel'] = 'wechat';
-//        } ELSE {
-//            $request['trade_channel'] = null;
-//        }
-//
-//        return $this->service->detect($request);
+        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
+            $trade_channel = 'qq';
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')) {
+            $trade_channel = 'alipay';
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')) {
+            $trade_channel = 'wechat';
+        } ELSE {
+            admin_abort('无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
+        }
+        $data['trade_channel'] = $trade_channel;
+
+        $res = $this->service->detect($data);
+        if (!$res) {
+            return $this->response()->success($res,'成功');
+        }
+        return $this->response()->fail('失败');
     }
 
 

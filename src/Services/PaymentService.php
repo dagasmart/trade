@@ -36,9 +36,9 @@ class PaymentService extends AdminService
                 'subject' => 'yansongda 测试 - 01',
                 'quit_url' => 'https://yansongda.cn',
             ]);
+        } else {
+            return false;
         }
-        return false;
-
     }
 
     public function order($request)
