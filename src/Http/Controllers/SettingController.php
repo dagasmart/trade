@@ -62,17 +62,24 @@ class SettingController extends AdminController
                                                 ->size('lg'),
                                             amis()->TextareaControl('payment.alipay.default.app_secret_cert','商户秘钥')
                                                 ->description('必填，应用私钥，字符串或路径 app_secret_cert')
+                                                ->maxRows(8)
                                                 ->size(),
                                         ]),
                                         amis()->Tab()->title('支付证书')->body([
                                             amis()->FileControl('payment.alipay.default.app_public_cert_path','应用公钥证书')
-                                                ->description('必填，应用公钥证书 路径 app_secret_cert')
+                                                ->description('必填，应用公钥证书 路径 appCertPublicKey')
+                                                ->receiver(admin_url('upload_cert?channel=alipay'))
+                                                ->accept('.crt')
                                                 ->size('lg'),
                                             amis()->FileControl('payment.alipay.default.alipay_public_cert_path','支付宝公钥证书')
-                                                ->description('必填，支付宝公钥证书 路径 alipay_public_cert_path')
+                                                ->description('必填，支付宝公钥证书 路径 alipayCertPublicKey_RSA2')
+                                                ->receiver(admin_url('upload_cert?channel=alipay'))
+                                                ->accept('.crt')
                                                 ->size('lg'),
-                                            amis()->FileControl('payment.alipay.default.alipay_public_cert_path','支付宝根证书')
-                                                ->description('必填，支付宝根证书 路径 alipay_root_cert_path')
+                                            amis()->FileControl('payment.alipay.default.alipay_root_cert_path','支付宝根证书')
+                                                ->description('必填，支付宝根证书 路径 alipayRootCert')
+                                                ->receiver(admin_url('upload_cert?channel=alipay'))
+                                                ->accept('.crt')
                                                 ->size('lg'),
                                         ]),
                                         amis()->Tab()->title('支付回调')->body([
