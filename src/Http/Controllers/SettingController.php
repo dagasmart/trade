@@ -42,7 +42,7 @@ class SettingController extends AdminController
                 amis()->Tabs()->name('settings')->tabs([
                     amis()->Tab()->title('支付设置')->body([
                         // line | card | radio | vertical | chrome | simple | strong | tiled | sidebar
-                        amis()->Tabs()->tabsMode('sidebar')->tabs([
+                        amis()->Tabs()->tabsMode('sidebar')->linksClassName(['p-6' => true])->tabs([
                             amis()->Tab()->title('支付宝')->body([
                                 amis()->Alert()
                                     ->showIcon()
@@ -62,7 +62,8 @@ class SettingController extends AdminController
                                                 ->size('lg'),
                                             amis()->TextareaControl('payment.alipay.default.app_secret_cert','商户秘钥')
                                                 ->description('必填，应用私钥，字符串或路径 app_secret_cert')
-                                                ->maxRows(8)
+                                                ->maxRows(12)
+                                                ->minRows(12)
                                                 ->size(),
                                         ]),
                                         amis()->Tab()->title('支付证书')->body([
@@ -100,6 +101,8 @@ class SettingController extends AdminController
                                                 ->value( 0)
                                                 ->size('lg'),
                                         ]),
+                                    ])->toolbar([
+                                        amis()->SwitchControl('payment.alipay.default.switch')->size('sm')
                                     ]),
                                 ]),
                             ])->className(['p-10' => true]),
@@ -159,9 +162,7 @@ class SettingController extends AdminController
                                                 ->size('lg'),
                                         ]),
                                     ])->toolbar([
-                                        amis()->SwitchControl('payment.wechat.default.switch')
-                                            ->onText('开启')
-                                            ->offText('关闭'),
+                                        amis()->SwitchControl('payment.wechat.default.switch')->size('sm')
                                     ]),
                                 ]),
                             ])->className(['p-10' => true]),
@@ -220,6 +221,8 @@ class SettingController extends AdminController
                                                 ->description('选填，app移动终端的 app_id')
                                                 ->size('lg'),
                                         ]),
+                                    ])->toolbar([
+                                        amis()->SwitchControl('payment.douyin.default.switch')->size('sm')
                                     ]),
                                 ]),
                             ])->className(['p-10' => true]),
@@ -267,11 +270,18 @@ class SettingController extends AdminController
                                                 ->size('lg')
                                                 ->required(false),
                                         ]),
+                                    ])->toolbar([
+                                        amis()->SwitchControl('payment.unipay.default.switch')->size('sm')
                                     ]),
                                 ]),
                             ])->className(['p-10' => true]),
                         ]),
                     ])->value('payment'),
+                ])->toolbar([
+                    amis()->SwitchControl('payment.switch')
+                        ->onText('开启')
+                        ->offText('关闭')
+                        ->size('xs'),
                 ])
             );
     }
