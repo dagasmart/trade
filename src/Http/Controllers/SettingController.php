@@ -69,7 +69,7 @@ class SettingController extends AdminController
                                         amis()->Tab()->title('支付证书')->body([
                                             amis()->FileControl('payment.alipay.default.app_public_cert_path','应用公钥证书')
                                                 ->description('必填，应用公钥证书 路径 appCertPublicKey')
-                                                ->receiver(admin_url('upload_cert?channel=alipay'))
+                                                ->receiver(admin_url('upload_cert?channel=alipay&prefix=${payment.alipay.default.app_id}'))
                                                 ->accept('.crt')
                                                 ->size('lg'),
                                             amis()->FileControl('payment.alipay.default.alipay_public_cert_path','支付宝公钥证书')
