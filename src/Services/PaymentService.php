@@ -17,7 +17,7 @@ class PaymentService extends AdminService
 
     public function detect($request)
     {
-        $config = settings()->get('payment');
+        $config = admin_pay_config('plat');
         admin_abort_if($config['switch'], '未开启支付功能');
         Pay::config($config);
         if ($request['trade_channel'] == 'alipay') {

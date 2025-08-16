@@ -14,7 +14,9 @@ class SettingController extends AdminController
 
     public function index()
     {
-        if ($this->actionOfGetData()) return $this->response()->success(settings()->all());
+        if ($this->actionOfGetData()){
+            return $this->response()->success(['payment' => settings()->get('payment')]);
+        }
 
         $page = $this->basePage()->body([
             amis()->Alert()
@@ -69,18 +71,22 @@ class SettingController extends AdminController
                                         amis()->Tab()->title('支付证书')->body([
                                             amis()->FileControl('payment.alipay.default.app_public_cert_path','应用公钥证书')
                                                 ->description('必填，应用公钥证书 路径 appCertPublicKey')
-                                                ->receiver(admin_url('upload_cert?channel=alipay&prefix=${payment.alipay.default.app_id}'))
+                                                ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
+                                                ->downloadUrl(false)
                                                 ->size('lg'),
                                             amis()->FileControl('payment.alipay.default.alipay_public_cert_path','支付宝公钥证书')
                                                 ->description('必填，支付宝公钥证书 路径 alipayCertPublicKey_RSA2')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
+                                                ->downloadUrl(false)
+                                                ->hideUploadButton(false)
                                                 ->size('lg'),
                                             amis()->FileControl('payment.alipay.default.alipay_root_cert_path','支付宝根证书')
                                                 ->description('必填，支付宝根证书 路径 alipayRootCert')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
+                                                ->downloadUrl(false)
                                                 ->size('lg'),
                                         ]),
                                         amis()->Tab()->title('支付回调')->body([
@@ -296,7 +302,6 @@ class SettingController extends AdminController
             'upload_path',
             'payment'
         ]);
-
         return settings()->adminSetMany($data);
     }
 }
