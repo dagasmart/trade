@@ -55,6 +55,7 @@ class PaymentService extends AdminService
                     'quit_url' => 'https://yansongda.cn',
                 ]);
             }
+            return true;
         } catch (ContainerException $e) {
             admin_abort('交易异常，请稍候重试：' . $e->getMessage());
         }
