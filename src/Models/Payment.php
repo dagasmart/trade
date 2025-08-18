@@ -32,4 +32,13 @@ class Payment extends BaseModel
         return $option[$key] ?? null;
     }
 
+    /**
+     * @param $key
+     * @return string|null
+     */
+    public function isPlat($key): string|null
+    {
+        return in_array($key, ['soft', 'recharge']);
+    }
+
 }

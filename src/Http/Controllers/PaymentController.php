@@ -18,9 +18,9 @@ class PaymentController extends AdminController
     /**
      * 识别扫码终端
      * @param Request $request
-     * @return JsonResponse
+     * @return mixed
      */
-    public function detect(Request $request)
+    public function detect(Request $request): mixed
     {
         $data = [];
         $data['source'] = $request->source;
@@ -35,9 +35,20 @@ class PaymentController extends AdminController
 //        } ELSE {
 //            admin_abort('无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
 //        }
-        $data['trade_channel'] = $trade_channel ?? null;
+        $data['trade_channel'] = $trade_channel ?? 'alipay';
 
-        return $this->service->detect($data);
+        return $this->payOrder($data);
+    }
+
+    /**
+     * 创建订单
+     * 进行付款
+     * @param $data
+     * @return mixed
+     */
+    public function payOrder($data): mixed
+    {
+        return $this->service->payOrder($data);
     }
 
 
@@ -46,11 +57,9 @@ class PaymentController extends AdminController
      * @param Request $request
      * @return JsonResponse
      */
-    public function order(Request $request): JsonResponse
+    public function order2(Request $request): JsonResponse
     {
         return $this->response()->successMessage('2341234333222');
-        return $this->service->order($request);
-
     }
 
 }

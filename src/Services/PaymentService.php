@@ -4,8 +4,11 @@ namespace DagaSmart\Trade\Services;
 
 use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Payment;
+use Psr\Http\Message\ResponseInterface;
 use Yansongda\Artful\Exception\ContainerException;
+use Yansongda\Artful\Rocket;
 use Yansongda\Pay\Pay;
+use Yansongda\Supports\Collection;
 
 
 /**
@@ -16,13 +19,32 @@ class PaymentService extends AdminService
     protected string $modelName = Payment::class;
 
 
-    public function detect($request)
+    /**
+     * @param $data
+     * @return ResponseInterface|true|void|Rocket|Collection
+     */
+    public function payOrder($data)
     {
-        $config = admin_pay_config();
+        $source = $data['source'] ?? null;
+        admin_abort_if(!$source, '订单来源不能为空：source');
+        //订单来源是否平台
+        $is_plat = $this->getModel()->isPlat($source);
+        $data['is_plat'] = $is_plat;
+
+        $config = trade_pay_config($data);
         $switch = $config['switch'] ?? null;
         admin_abort_if(!$switch, '未开启支付功能');
 
-        $trade_channel = $request['trade_channel'] ?? null;
+        //非平台订单时，商户必须
+        if (!$is_plat) {
+            $mer_id = $data['mer_id'] ?? null;
+            admin_abort_if(!$mer_id, '商户id不能为空：mer_id');
+        }
+
+        $order_no = $data['order_no'] ?? null;
+        admin_abort_if(!$order_no, '订单号不能为空：order_no');
+
+        $trade_channel = $data['trade_channel'] ?? null;
         $trade_channel_as = $this->getModel()->channelAs($trade_channel);
         admin_abort_if(!$trade_channel, $trade_channel_as . '支付通道不能为空：trade_channel');
 
@@ -61,7 +83,7 @@ class PaymentService extends AdminService
         }
     }
 
-    public function order($request)
+    public function paying($data)
     {
 
     }

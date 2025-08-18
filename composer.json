@@ -21,7 +21,10 @@
     "autoload": {
         "psr-4": {
             "DagaSmart\\Trade\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "extra": {
         "bizadmin": "DagaSmart\\Trade\\TradeServiceProvider",
