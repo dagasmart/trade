@@ -78,7 +78,6 @@ class SettingController extends AdminController
                                                 ->description('必填，支付宝公钥证书 路径 alipayCertPublicKey_RSA2')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
-                                                ->hideUploadButton(false)
                                                 ->size('lg'),
                                             amis()->FileControl('payment.alipay.default.alipay_root_cert_path','支付宝根证书')
                                                 ->description('必填，支付宝根证书 路径 alipayRootCert')
