@@ -21,13 +21,21 @@ class SettingController extends AdminController
         $page = $this->basePage()->body([
             amis()->Alert()
                 ->showIcon()
+                ->showCloseButton()
+                ->closeButtonClassName(['text-xs'=>true])
                 ->style([
                     'padding' => '1rem',
                     'color' => 'var(--colors-brand-6)',
                     'border-style' => 'dashed',
                     'border-color' => 'var(--colors-brand-6)',
                     'background-color' => 'var(--Tree-item-onChekced-bg)',
-                ])->body("基本设置，站点名称、logo标识"),
+                    'opacity' => 0.65,
+                ])->body("
+                    注意事项：
+                    </br>商户私钥 必须严格保密，切勿泄露。
+                    </br>确保密钥配置正确，否则支付接口无法正常使用
+                    </br>如果使用 证书模式，需下载证书文件并配置到服务器
+                "),
             $this->form(),
         ]);
 
@@ -208,19 +216,6 @@ class SettingController extends AdminController
                                                 ->size('lg'),
                                             amis()->TextControl('payment.douyin.default.mini_secret_key','小程序秘钥 secret_key')
                                                 ->description('必填，小程序秘钥')
-                                                ->size('lg'),
-                                        ]),
-                                        amis()->Tab()->title('公众号')->body([
-                                            amis()->TextControl('payment.douyin.default.mp_app_id','公众号 app_id')
-                                                ->description('选填，公众号的app_id')
-                                                ->size('lg'),
-                                            amis()->TextControl('payment.douyin.default.mp_secret_key','公众号秘钥 secret_key')
-                                                ->description('必填，公众号秘钥')
-                                                ->size('lg'),
-                                        ]),
-                                        amis()->Tab()->title('移动端')->body([
-                                            amis()->TextControl('payment.douyin.default.app_id','app移动端 app_id')
-                                                ->description('选填，app移动终端的 app_id')
                                                 ->size('lg'),
                                         ]),
                                     ])->toolbar([
