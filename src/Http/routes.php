@@ -29,5 +29,7 @@ Route::group([
 ], function (Router $router) {
     //识别终端/生成订单
     $router->get('payment/detect/{source}/{order_no}', [Controllers\PaymentController::class, 'detect'])->withoutMiddleware([Authenticate::class, Permission::class]);
+    $router->get('payment/order/{source}/{order_no}', [Controllers\PaymentController::class, 'order'])->withoutMiddleware([Authenticate::class, Permission::class]);
+    $router->get('payment/return', [Controllers\PaymentController::class, 'return'])->withoutMiddleware([Authenticate::class, Permission::class]);
 
 });
