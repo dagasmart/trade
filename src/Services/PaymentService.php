@@ -4,6 +4,7 @@ namespace DagaSmart\Trade\Services;
 
 use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Payment;
+use DagaSmart\Trade\Models\TradeOrder;
 use Psr\Http\Message\ResponseInterface;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Rocket;
@@ -37,6 +38,8 @@ class PaymentService extends AdminService
 
         //非平台订单时，商户必须
         if (!$is_plat) {
+            $module = $data['module'] ?? null;
+            admin_abort_if(!$module, '模块不能为空：module');
             $mer_id = $data['mer_id'] ?? null;
             admin_abort_if(!$mer_id, '商户id不能为空：mer_id');
         }
@@ -57,6 +60,15 @@ class PaymentService extends AdminService
         $trade_channel_config_default_switch = $trade_channel_config_default['switch'] ?? null;
         admin_abort_if(!$trade_channel_config_default_switch, $trade_channel_as . '未开启支付通道');
 
+        $model = new TradeOrder;
+        $row = $model->where('base_order_no',$order_no)
+            ->where('order_source', $source)
+            ->where('is_plat', $is_plat)
+            ->first();
+        $prefix = $is_plat ? $source : null;
+        $row->order_no = admin_order_sn($prefix);
+        $row->save();
+dump($row->toArray());die;
         try {
             Pay::config($config);
 

@@ -34,6 +34,7 @@ return new class extends Migration
                 $table->string('trade_no',64)->nullable()->comment('交易号');
                 $table->string('trade_code',10)->nullable()->comment('交易码：10000-支付成功');
                 $table->jsonb('trade_result')->nullable()->comment('交易结果');
+                $table->tinyInteger('is_plat')->default(0)->comment('是否平台订单');
                 $table->bigInteger('payer_id')->comment('付款人id');
                 $table->json('payer')->comment('付款人信息');
 
