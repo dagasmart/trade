@@ -44,8 +44,9 @@ class SettingController extends AdminController
 
     public function form()
     {
-        return $this->baseForm(false)
+        return $this->baseForm(true)
             ->redirect('')
+            ->data(['admin_link' =>admin_link()])
             ->api($this->getStorePath())
             ->initApi(admin_url('trade/settings?_action=getData'))
             ->body(
@@ -94,11 +95,13 @@ class SettingController extends AdminController
                                                 ->size('lg'),
                                         ]),
                                         amis()->Tab()->title('支付回调')->body([
-                                            amis()->TextControl('payment.alipay.default.return_url','回调结果')
+                                            amis()->TextControl('payment.alipay.default.return_url','同步回调地址')
                                                 ->description('选填，支付回调结果，return_url地址')
+                                                ->resetValue(admin_link('trade/return/alipay'))
                                                 ->size(),
-                                            amis()->TextControl('payment.alipay.default.notify_url','回调处理')
+                                            amis()->TextControl('payment.alipay.default.notify_url','异步回调地址')
                                                 ->description('必填，支付回调处理，notify_url地址')
+                                                ->resetValue(admin_link('trade/notify/alipay'))
                                                 ->size(),
                                         ]),
                                         amis()->Tab()->title('服务商')->body([
@@ -289,8 +292,6 @@ class SettingController extends AdminController
         $data = $request->only([
             'site_name',
             'addition_config',
-            'upload_domain',
-            'upload_path',
             'payment'
         ]);
         return settings()->adminSetMany($data);

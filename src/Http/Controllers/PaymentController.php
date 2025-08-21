@@ -6,7 +6,6 @@ use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\PaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 
 class PaymentController extends AdminController
@@ -75,6 +74,7 @@ class PaymentController extends AdminController
             // 签名验证失败，可能是数据被篡改，需要进一步处理或提示用户
             return $this->response()->successMessage('支付失败或数据被篡改');
         }
+
     }
 
     /**
