@@ -31,5 +31,13 @@ Route::group([
     $router->get('payment/detect/{source}/{order_no}', [Controllers\PaymentController::class, 'detect'])->withoutMiddleware([Authenticate::class, Permission::class]);
     $router->get('payment/order/{source}/{order_no}', [Controllers\PaymentController::class, 'order'])->withoutMiddleware([Authenticate::class, Permission::class]);
     $router->get('payment/return', [Controllers\PaymentController::class, 'return'])->withoutMiddleware([Authenticate::class, Permission::class]);
+    //支付同步回调
+    $router->get('return/{channel}', function ($channel) {
+        return [Controllers\ReturnController::class, $channel];
+    })->withoutMiddleware([Authenticate::class, Permission::class]);
+    //支付异步回调
+    $router->get('notify/{channel}', function ($channel) {
+        return [Controllers\NotifyController::class, $channel];
+    })->withoutMiddleware([Authenticate::class, Permission::class]);
 
 });
