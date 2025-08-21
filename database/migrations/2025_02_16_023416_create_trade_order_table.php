@@ -24,6 +24,7 @@ return new class extends Migration
 
                 $table->integer('order_id')->comment('订单id');
                 $table->string('order_no',64)->comment('订单号');
+                $table->string('base_order_no',64)->nullable()->comment('原始订单号');
                 $table->string('order_source',20)->nullable()->comment('订单来源：shop商城，soft软件，recharge充值');
                 $table->tinyInteger('trade_type')->default(1)->comment('交易类型：1支付，2退款');
                 $table->string('trade_channel',20)->nullable()->comment('交易渠道：alipay支付宝、wechat微信、douyin抖音、unipay银联');

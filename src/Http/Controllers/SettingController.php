@@ -96,12 +96,12 @@ class SettingController extends AdminController
                                         ]),
                                         amis()->Tab()->title('支付回调')->body([
                                             amis()->TextControl('payment.alipay.default.return_url','同步回调地址')
-                                                ->description('选填，支付回调结果，return_url地址')
-                                                ->resetValue(admin_link('trade/return/alipay'))
+                                                ->description('系统自动生成同步回调return_url地址')
+                                                ->static()
                                                 ->size(),
                                             amis()->TextControl('payment.alipay.default.notify_url','异步回调地址')
-                                                ->description('必填，支付回调处理，notify_url地址')
-                                                ->resetValue(admin_link('trade/notify/alipay'))
+                                                ->description('系统自动生成异步回调notify_url地址')
+                                                ->static()
                                                 ->size(),
                                         ]),
                                         amis()->Tab()->title('服务商')->body([
@@ -294,6 +294,43 @@ class SettingController extends AdminController
             'addition_config',
             'payment'
         ]);
+
+        $payment = $data['payment'] ?? null;
+        if ($data && $payment) {
+            $alipay = $payment['alipay'] ?? null;
+            if ($alipay) {
+                $alipay_default = $alipay['default'] ?? null;
+                if ($alipay_default) {
+                    $data['payment']['alipay']['default']['return_url'] = admin_link('trade/return/alipay');
+                    $data['payment']['alipay']['default']['notify_url'] = admin_link('trade/notify/alipay');
+                }
+            }
+
+            $wechat = $payment['wechat'] ?? null;
+            if ($wechat) {
+                $wechat_default = $wechat['default'] ?? null;
+                if ($wechat_default) {
+                    $data['payment']['wechat']['default']['notify_url'] = admin_link('trade/notify/wechat');
+                }
+            }
+
+            $douyin = $payment['douyin'] ?? null;
+            if ($douyin) {
+                $douyin_default = $douyin['default'] ?? null;
+                if ($douyin_default) {
+                    $data['payment']['douyin']['default']['notify_url'] = admin_link('trade/notify/douyin');
+                }
+            }
+
+            $unipay = $payment['unipay'] ?? null;
+            if ($unipay) {
+                $unipay_default = $unipay['default'] ?? null;
+                if ($unipay_default) {
+                    $data['payment']['unipay']['default']['return_url'] = admin_link('trade/return/unipay');
+                    $data['payment']['unipay']['default']['notify_url'] = admin_link('trade/notify/unipay');
+                }
+            }
+        }
         return settings()->adminSetMany($data);
     }
 }
