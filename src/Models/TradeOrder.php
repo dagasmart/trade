@@ -11,5 +11,6 @@ use DagaSmart\BizAdmin\Models\BaseModel;
 class TradeOrder extends BaseModel
 {
 
+    protected $table = 'trade_order';
 
 }

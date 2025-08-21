@@ -60,15 +60,18 @@ class PaymentService extends AdminService
         $trade_channel_config_default_switch = $trade_channel_config_default['switch'] ?? null;
         admin_abort_if(!$trade_channel_config_default_switch, $trade_channel_as . '未开启支付通道');
 
-        $model = new TradeOrder;
-        $row = $model->where('base_order_no',$order_no)
-            ->where('order_source', $source)
-            ->where('is_plat', $is_plat)
-            ->first();
         $prefix = $is_plat ? $source : null;
-        $row->order_no = admin_order_sn($prefix);
-        $row->save();
-dump($row->toArray());die;
+        $model = new TradeOrder;
+        $model->query()->updateOrCreate(
+            // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
+            ['base_order_no' => admin_hash($order_no), 'order_source' => $source, 'is_plat' => $is_plat],
+            // 新记录的默认值或需要更新的字段和值
+            ['order_no' => admin_order_sn($prefix), 'order_source' => $source]
+        );
+
+
+
+dump($prefix);die;
         try {
             Pay::config($config);
 

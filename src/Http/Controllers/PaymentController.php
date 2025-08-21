@@ -25,15 +25,15 @@ class PaymentController extends AdminController
         $data['source'] = $request->source;
         $data['order_no'] = $request->order_no;
         //判断扫描二维码的APP为 QQ
-        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
-            $trade_channel = 'qq';
-        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')) {
+//        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
+//            $trade_channel = 'qq';
+//        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')) {
+//            $trade_channel = 'alipay';
+//        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')) {
+//            $trade_channel = 'wechat';
+//        } ELSE {
             $trade_channel = 'alipay';
-        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')) {
-            $trade_channel = 'wechat';
-        } ELSE {
-            $trade_channel = null;
-        }
+//        }
         admin_abort_if(!$trade_channel, '无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
         $data['trade_channel'] = $trade_channel ?? null;
         return $this->payOrder($data);
