@@ -22,8 +22,8 @@ class PaymentController extends AdminController
     public function detect(Request $request): mixed
     {
         $data = [];
-        $data['source'] = $request->source;
-        $data['order_no'] = $request->order_no;
+        $data['ciphertext'] = $request->ciphertext;
+        dump($data);die;
         //判断扫描二维码的APP为 QQ
 //        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
 //            $trade_channel = 'qq';
