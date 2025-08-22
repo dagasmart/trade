@@ -45,6 +45,7 @@ class PaymentController extends AdminController
         }
         admin_abort_if(!$trade_channel, '无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
         $plainText['trade_channel'] = $trade_channel;
+        dump($plainText);die;
         return $this->payOrder($plainText);
     }
 
