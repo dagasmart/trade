@@ -2,6 +2,7 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
+use App\Library\Aes;
 use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\PaymentService;
 use Illuminate\Http\JsonResponse;
@@ -21,8 +22,10 @@ class PaymentController extends AdminController
      */
     public function detect(Request $request): mixed
     {
+        $aes = new Aes;
         $data = [];
         $data['ciphertext'] = $request->ciphertext;
+        $data['plainText'] = $aes->decrypt($request->ciphertext);
         dump($data);die;
         //判断扫描二维码的APP为 QQ
 //        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
