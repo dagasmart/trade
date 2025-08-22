@@ -22,30 +22,32 @@ class PaymentService extends AdminService
 
     /**
      * @param $data
-     * @return ResponseInterface|true|void|Rocket|Collection
+     //* @return ResponseInterface|true|void|Rocket|Collection
      */
     public function payOrder($data)
     {
         $source = $data['source'] ?? null;
         admin_abort_if(!$source, '订单来源不能为空：source');
-        //订单来源是否平台
-        $is_plat = $this->getModel()->isPlat($source);
-        $data['is_plat'] = $is_plat;
+        $module = $data['module'] ?? null;
+        $mer_id = $data['mer_id'] ?? null;
+        $is_plat = $data['is_plat'] ?? in_array($source, $this->modelName->plat);
+        $cfg = [];
+        $cfg['module'] = $module;
+        $cfg['mer_id'] = $mer_id;
+        $cfg['is_plat'] = $is_plat;
 
-        $config = trade_pay_config($data);
+        $config = trade_pay_config($cfg);
         $switch = $config['switch'] ?? null;
         admin_abort_if(!$switch, '未开启支付功能');
 
-        //非平台订单时，商户必须
+        //非平台订单时，商户必须存在
         if (!$is_plat) {
-            $module = $data['module'] ?? null;
             admin_abort_if(!$module, '模块不能为空：module');
-            $mer_id = $data['mer_id'] ?? null;
-            admin_abort_if(!$mer_id, '商户id不能为空：mer_id');
+            admin_abort_if(!$mer_id, '商户不能为空：mer_id');
         }
 
-        $order_no = $data['order_no'] ?? null;
-        admin_abort_if(!$order_no, '订单号不能为空：order_no');
+        $base_order_no = $data['order_no'] ?? null;
+        admin_abort_if(!$base_order_no, '订单号不能为空：order_no');
 
         $trade_channel = $data['trade_channel'] ?? null;
         $trade_channel_as = $this->getModel()->channelAs($trade_channel);
@@ -64,7 +66,7 @@ class PaymentService extends AdminService
         $model = new TradeOrder;
         $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
-            ['base_order_no' => admin_hash($order_no), 'order_source' => $source, 'is_plat' => $is_plat],
+            ['base_order_no' => $base_order_no, 'order_source' => $source, 'is_plat' => $is_plat],
             // 新记录的默认值或需要更新的字段和值
             ['order_no' => admin_order_sn($prefix), 'order_source' => $source]
         );

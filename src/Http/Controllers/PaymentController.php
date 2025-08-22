@@ -24,22 +24,28 @@ class PaymentController extends AdminController
     {
         $aes = new Aes;
         $data = [];
-        $data['ciphertext'] = $request->ciphertext;
-        $data['plainText'] = $aes->decrypt($request->ciphertext);
-        dump($data);die;
-        //判断扫描二维码的APP为 QQ
-//        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
-//            $trade_channel = 'qq';
-//        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')) {
-//            $trade_channel = 'alipay';
-//        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')) {
-//            $trade_channel = 'wechat';
-//        } ELSE {
-            $trade_channel = 'alipay';
-//        }
+        $ciphertext = $request->ciphertext ?? null;
+        $plainText = $aes->decrypt($ciphertext);
+        if(!$plainText) {
+            admin_abort('无法正确解析订单信息');
+        }
+        //判断扫描二维码的APP
+        IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
+            $trade_channel = 'qq';//qq
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'Alipay')) {
+            $trade_channel = 'alipay';//支付宝
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')) {
+            $trade_channel = 'wechat';//微信
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'TikTok')) {
+            $trade_channel = 'douyin';//抖音
+        } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'UnionPay')) {
+            $trade_channel = 'unipay';//银联
+        } ELSE {
+            $trade_channel = null;
+        }
         admin_abort_if(!$trade_channel, '无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
-        $data['trade_channel'] = $trade_channel ?? null;
-        return $this->payOrder($data);
+        $plainText['trade_channel'] = $trade_channel;
+        return $this->payOrder($plainText);
     }
 
     /**
