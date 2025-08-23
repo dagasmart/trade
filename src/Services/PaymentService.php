@@ -46,6 +46,8 @@ class PaymentService extends AdminService
             admin_abort_if(!$mer_id, '商户不能为空：mer_id');
         }
 
+        $order_id = $data['order_id'] ?? null;
+
         $base_order_no = $data['order_no'] ?? null;
         admin_abort_if(!$base_order_no, '订单号不能为空：order_no');
 
@@ -66,9 +68,9 @@ class PaymentService extends AdminService
         $model = new TradeOrder;
         $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
-            ['base_order_no' => $base_order_no, 'order_source' => $source, 'is_plat' => $is_plat],
+            ['order_id' => $order_id, 'base_order_no' => $base_order_no, 'order_source' => $source, 'is_plat' => $is_plat],
             // 新记录的默认值或需要更新的字段和值
-            ['order_no' => admin_order_sn($prefix), 'order_source' => $source]
+            ['order_id' => $order_id, 'order_no' => admin_order_sn($prefix), 'order_source' => $source]
         );
 
 

@@ -35,10 +35,11 @@ class Payment extends BaseModel
     }
 
     /**
+     * 是否平台
      * @param $key
-     * @return string|null
+     * @return bool
      */
-    public function isPlat($key): string|null
+    public function isPlat($key): bool
     {
         return in_array($key, $this->plat);
     }
