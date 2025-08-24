@@ -15,7 +15,7 @@ class SettingController extends AdminController
     public function index()
     {
         if ($this->actionOfGetData()){
-            return $this->response()->success(['payment' => settings()->get('payment')]);
+            return $this->response()->success(['payment' => settings()->pay('payment')]);
         }
 
         $page = $this->basePage()->body([

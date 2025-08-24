@@ -41,7 +41,7 @@ class PaymentController extends AdminController
         } ELSE IF (str_contains($_SERVER['HTTP_USER_AGENT'], 'UnionPay')) {
             $trade_channel = 'unipay';//银联
         } ELSE {
-            $trade_channel = null;
+            $trade_channel = 'alipay';
         }
         admin_abort_if(!$trade_channel, '无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
         $plainText['trade_channel'] = $trade_channel;

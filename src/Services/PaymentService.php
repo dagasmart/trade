@@ -22,7 +22,6 @@ class PaymentService extends AdminService
 
     /**
      * @param $data
-     //* @return ResponseInterface|true|void|Rocket|Collection
      */
     public function payOrder($data)
     {
@@ -30,6 +29,7 @@ class PaymentService extends AdminService
         admin_abort_if(!$source, '订单来源不能为空：source');
         $module = $data['module'] ?? null;
         $mer_id = $data['mer_id'] ?? null;
+        $user_id = $data['user_id'] ?? null;
         $is_plat = $data['is_plat'] ?? in_array($source, $this->modelName->plat);
         $cfg = [];
         $cfg['module'] = $module;
@@ -64,35 +64,68 @@ class PaymentService extends AdminService
         $trade_channel_config_default_switch = $trade_channel_config_default['switch'] ?? null;
         admin_abort_if(!$trade_channel_config_default_switch, $trade_channel_as . '未开启支付通道');
 
+        $pay_amount = $data['pay_amount'] ?? 0;
+        if($pay_amount <= 0) {
+            admin_abort_if(!$trade_channel_config_default_switch, $trade_channel_as . '金额无效: amount=' . $pay_amount);
+        }
+        //订单微秒时间戳
+        $lat = $data['lat'] ?? null;
+        //订单前缀
         $prefix = $is_plat ? $source : null;
+        //交易订单号
+        $trade_order_sn = trade_order_sn($lat, $prefix);
+        //更新或新增订单数据
         $model = new TradeOrder;
-        $model->query()->updateOrCreate(
+        $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
-            ['order_id' => $order_id, 'base_order_no' => $base_order_no, 'order_source' => $source, 'is_plat' => $is_plat],
+            [
+                'order_id' => $order_id,
+                'base_order_no' => $base_order_no,
+                'order_source' => $source,
+                'trade_channel' => $trade_channel,
+                'trade_status' => 0,
+                'is_plat' => $is_plat,
+                'module' => $module,
+                'mer_id' => $mer_id,
+                'payer_id' => $user_id,
+            ],
             // 新记录的默认值或需要更新的字段和值
-            ['order_id' => $order_id, 'order_no' => admin_order_sn($prefix), 'order_source' => $source]
+            [
+                'order_id' => $order_id,
+                'order_no' => $trade_order_sn,
+                'base_order_no' => $base_order_no,
+                'order_source' => $source,
+                'trade_type' => 1,
+                'trade_channel' => $trade_channel,
+                'trade_amount' => $pay_amount,
+                'is_plat' => $is_plat,
+                'module' => $module,
+                'mer_id' => $mer_id,
+                'payer_id' => 1,
+                'payer' => json_encode(['user_id' => 1, 'user_name' => 'admin'],JSON_UNESCAPED_UNICODE)
+            ]
         );
 
+        $record = (object) $record->toArray();
 
-
-dump($prefix);die;
         try {
+
             Pay::config($config);
 
             if ($trade_channel == 'alipay') {
                 return Pay::alipay()->h5([
-                    'out_trade_no' => time(),
-                    'total_amount' => '0.05',
-                    'subject' => 'dagasmart 测试 - 01',
+                    'out_trade_no' => $record->order_no,
+                    'total_amount' => $record->trade_amount,
+                    'subject' => $this->getModel()->source($record->order_source),
                     'quit_url' => 'https://bus.dagasmart.com',
                 ]);
             }
 
             if ($trade_channel == 'wechat') {
                 return Pay::wechat()->h5([
-                    'out_trade_no' => time(),
-                    'total_amount' => '0.01',
-                    'subject' => 'yansongda 测试 - 01',
+                    'out_trade_no' => $record->order_no,
+                    'total_amount' => $record->trade_amount,
+                    'subject' => $this->getModel()->source($record->order_source),
                     'quit_url' => 'https://yansongda.cn',
                 ]);
             }

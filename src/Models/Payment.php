@@ -16,7 +16,7 @@ class Payment extends BaseModel
     const DOUYIN = '抖音支付';
     const UNIPAY = '银联支付';
 
-    protected array $plat = ['soft', 'recharge'];
+    protected array $source = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
 
     public function channelOption(): array
     {
@@ -41,7 +41,17 @@ class Payment extends BaseModel
      */
     public function isPlat($key): bool
     {
-        return in_array($key, $this->plat);
+        return in_array($key, array_keys($this->source));
+    }
+
+    /**
+     * 交易订单来源
+     * @param null $key
+     * @return array|string|null
+     */
+    public function source($key = null): array|string|null
+    {
+        return $key ? ($this->source[$key] ?? null) : $this->source;
     }
 
 }
