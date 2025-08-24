@@ -115,7 +115,7 @@ class PaymentService extends AdminService
             if ($trade_channel == 'alipay') {
                 return Pay::alipay()->h5([
                     'out_trade_no' => $record->order_no,
-                    'total_amount' => $record->trade_amount,
+                    'total_amount' => 0.05,//$record->trade_amount,
                     'subject' => $this->getModel()->source($record->order_source),
                     'quit_url' => 'https://bus.dagasmart.com',
                 ]);
@@ -124,7 +124,7 @@ class PaymentService extends AdminService
             if ($trade_channel == 'wechat') {
                 return Pay::wechat()->h5([
                     'out_trade_no' => $record->order_no,
-                    'total_amount' => $record->trade_amount,
+                    'total_amount' => 0.05,//$record->trade_amount,
                     'subject' => $this->getModel()->source($record->order_source),
                     'quit_url' => 'https://yansongda.cn',
                 ]);
