@@ -12,22 +12,19 @@ use DagaSmart\Trade\Models\TradeOrder;
  */
 class ReturnService extends AdminService
 {
-    protected string $modelName = Payment::class;
 
-    public function paySave($data): bool
+    public function paySave($data)
     {
-        if(!$data) return false;
-
         $model = new TradeOrder;
         $row = $model->query()
             ->where(['order_no' => $data->out_trade_no])
             ->where(['trade_status' => 0])
             ->first();
         $row->trade_no = $data->trade_no;
-        $row->total_amount = $data->total_amount;
+        $row->trade_amount = $data->total_amount;
         $row->trade_status = 1; //支付成功
         $row->trade_time = $data->timestamp;
-        return $row->save();
+        return $row;
     }
 
 

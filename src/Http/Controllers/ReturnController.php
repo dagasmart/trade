@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Psr\Http\Message\ResponseInterface;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Pay\Pay;
@@ -35,21 +34,24 @@ class ReturnController extends AdminController
     /**
      * 支付宝
      * @param Request $request
-     * @return ResponseInterface
-     * @throws ContainerException|InvalidParamsException
+     * @return JsonResponse|JsonResource
+     * @throws ContainerException
+     * @throws InvalidParamsException
      */
-    public function alipay(Request $request): ResponseInterface
+    public function alipay(Request $request): JsonResponse|JsonResource
     {
-//        dump($request->toArray());
         $config = trade_pay_config();
         Pay::config($config);
 
         $alipay = Pay::alipay();
 
-        try {
+        //try {
             $data = $alipay->callback(); //回调验签
-            if ($alipay->success() == 'success') {
-                $this->service->paySave($data);
+            $res = $alipay->success();
+            if ($alipay->success()->getStatusCode() == 200) {
+                if ($this->service->paySave($data)) {
+                    return $this->response()->success([],'支付成功');
+                }
             }
 
             // 请自行对 trade_status 进行判断及其它逻辑进行判断，在支付宝的业务通知中，只有交易通知状态为 TRADE_SUCCESS 或 TRADE_FINISHED 时，支付宝才会认定为买家付款成功。
@@ -59,34 +61,10 @@ class ReturnController extends AdminController
             // 4、验证app_id是否为该商户本身。
             // 5、其它业务逻辑情况
             //Log::info('回调数据' . $data);
-        } catch (Exception $e) {
+        //} catch (Exception $e) {
             // $e->getMessage();
-        }
-
-        return $alipay->success();
-
-
-
-
-
-
-
-
-        $data = $request->toArray();
-
-        $config = trade_pay_config();
-        $alipay_public_cert_path = $config['alipay']['default']['alipay_public_cert_path'];
-        $aliPublicKey = $alipay_public_cert_path; // 你的支付宝公钥，请替换为真实的公钥字符串，通常是从支付宝商户后台获取的
-        if ($this->checkSign($data, $aliPublicKey)) {
-            // 签名验证成功，可以处理业务逻辑，如订单状态的更新等
-            return $this->response()->success([],'支付成功');
-        } else {
-            // 签名验证失败，可能是数据被篡改，需要进一步处理或提示用户
-            return $this->response()->fail('支付失败或数据被篡改');
-        }
-
-
-
+        //}
+        return $this->response()->fail('支付失败或数据被篡改');
     }
 
     public function wechat(Request $request)
