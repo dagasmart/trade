@@ -21,7 +21,7 @@ class ReturnService extends AdminService
             ->where(['trade_status' => 0])
             ->first();
         $row->trade_no = $data->trade_no;
-        $row->trade_amount = $data->total_amount;
+        $row->trade_amount = 0.05;//$data->total_amount;
         $row->trade_status = 1; //支付成功
         $row->trade_time = $data->timestamp;
         return $row;
