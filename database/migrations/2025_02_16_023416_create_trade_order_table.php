@@ -41,6 +41,9 @@ return new class extends Migration
                 $table->string('module', 50)->nullable()->comment('模块');
                 $table->bigInteger('mer_id')->nullable()->comment('商户id');
 
+                $table->index(['id','order_id','order_no','base_order_no','trade_no','trade_time']);
+                $table->unique(['order_no']);
+
                 $table->timestamps();
                 $table->softDeletes();
             });

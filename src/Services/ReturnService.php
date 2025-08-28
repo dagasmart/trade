@@ -24,7 +24,7 @@ class ReturnService extends AdminService
         $row->trade_amount = $data->total_amount;
         $row->trade_status = 1; //支付成功
         $row->trade_time = $data->timestamp;
-        return $row;
+        return $row->save();
     }
 
 
