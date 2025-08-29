@@ -111,7 +111,7 @@ class PaymentService extends AdminService
         try {
 
             Pay::config($config);
-
+            //支付宝
             if ($trade_channel == 'alipay') {
                 return Pay::alipay()->h5([
                     'out_trade_no' => $record->order_no,
@@ -120,8 +120,26 @@ class PaymentService extends AdminService
                     'quit_url' => 'https://bus.dagasmart.com',
                 ]);
             }
-
+            //微信
             if ($trade_channel == 'wechat') {
+                return Pay::wechat()->h5([
+                    'out_trade_no' => $record->order_no,
+                    'total_amount' => 0.05,//$record->trade_amount,
+                    'subject' => $this->getModel()->source($record->order_source),
+                    'quit_url' => 'https://yansongda.cn',
+                ]);
+            }
+            //抖音
+            if ($trade_channel == 'douyin') {
+                return Pay::wechat()->h5([
+                    'out_trade_no' => $record->order_no,
+                    'total_amount' => 0.05,//$record->trade_amount,
+                    'subject' => $this->getModel()->source($record->order_source),
+                    'quit_url' => 'https://yansongda.cn',
+                ]);
+            }
+            //银联
+            if ($trade_channel == 'unipay') {
                 return Pay::wechat()->h5([
                     'out_trade_no' => $record->order_no,
                     'total_amount' => 0.05,//$record->trade_amount,

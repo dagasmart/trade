@@ -16,15 +16,24 @@ class ReturnService extends AdminService
     public function paySave($data)
     {
         $model = new TradeOrder;
-        $row = $model->query()
-            ->where(['order_no' => $data->out_trade_no])
-            ->where(['trade_status' => 0])
-            ->first();
-        $row->trade_no = $data->trade_no;
-        $row->trade_amount = $data->total_amount;
-        $row->trade_status = 1; //支付成功
-        $row->trade_time = $data->timestamp;
-        return $row->save();
+        return admin_transaction(function () use (&$model, $data) {
+
+            $row = $model->query()
+                ->where(['order_no' => $data->out_trade_no])
+                ->where(['trade_status' => 0])
+                ->first();
+            $row->trade_no = $data->trade_no;
+            $row->trade_amount = $data->total_amount;
+            $row->trade_status = 1; //支付成功
+            $row->trade_time = $data->timestamp;
+            if ($row->save()) {
+                if ($row->order_source == 'soft') {
+                    admin_order_sn()
+
+                }
+
+            }
+        };
     }
 
 
