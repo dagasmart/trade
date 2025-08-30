@@ -18,6 +18,13 @@ class TradeServiceProvider extends ServiceProvider
         ],
         [
             'parent' => '支付交易',
+            'title' => '交易订单',
+            'url' => '/trade/order',
+            'url_type' => 1,
+            'icon' => 'iconoir:database-stats',
+        ],
+        [
+            'parent' => '支付交易',
             'title' => '交易流水',
             'url' => '/trade/record',
             'url_type' => 1,

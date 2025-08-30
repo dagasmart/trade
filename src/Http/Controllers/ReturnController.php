@@ -4,6 +4,7 @@ namespace DagaSmart\Trade\Http\Controllers;
 
 use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\ReturnService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,20 +34,20 @@ class ReturnController extends AdminController
     /**
      * 支付宝
      * @param Request $request
-     * @return JsonResponse|JsonResource
+     * @return JsonResponse|JsonResource|string
      * @throws ContainerException
      * @throws InvalidParamsException
      */
-    public function alipay(Request $request): JsonResponse|JsonResource
+    public function alipay(Request $request)
     {
         $config = trade_pay_config();
         Pay::config($config);
 
         $alipay = Pay::alipay();
 
-        //try {
+        try {
             $data = $alipay->callback(); //回调验签
-            $res = $alipay->success();
+            //$res = $alipay->success();
             if ($alipay->success()->getStatusCode() == 200) {
                 if ($this->service->paySave($data)) {
                     return $this->response()->success([],'支付成功');
@@ -60,9 +61,9 @@ class ReturnController extends AdminController
             // 4、验证app_id是否为该商户本身。
             // 5、其它业务逻辑情况
             //Log::info('回调数据' . $data);
-        //} catch (Exception $e) {
-            // $e->getMessage();
-        //}
+        } catch (Exception $e) {
+             return $e->getMessage();
+        }
         return $this->response()->fail('支付失败或数据被篡改');
     }
 

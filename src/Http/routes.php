@@ -11,6 +11,8 @@ use DagaSmart\BizAdmin\Middleware\Authenticate;
 Route::group([
     'prefix'     => 'trade',
 ], function (Router $router) {
+    //交易订单
+    $router->resource('order', Controllers\OrderController::class);
     //交易流水
     $router->resource('record', Controllers\RecordController::class);
     //账单结算

@@ -5,6 +5,7 @@ namespace DagaSmart\Trade\Http\Controllers;
 use App\Library\Aes;
 use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\PaymentService;
+use ErrorException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,7 @@ class PaymentController extends AdminController
      * 识别扫码终端
      * @param Request $request
      * @return mixed
+     * @throws ErrorException
      */
     public function detect(Request $request): mixed
     {
@@ -27,7 +29,7 @@ class PaymentController extends AdminController
         $ciphertext = $request->ciphertext ?? null;
         $plainText = $aes->decrypt($ciphertext);
         if(!$plainText) {
-            admin_abort('无法正确解析订单信息');
+            throw new ErrorException('无法正确解析订单信息');
         }
         //判断扫描二维码的APP
         IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
@@ -43,7 +45,9 @@ class PaymentController extends AdminController
         } ELSE {
             $trade_channel = 'alipay';
         }
-        admin_abort_if(!$trade_channel, '无法正确识别扫码终端(仅支持微信、支付宝、抖音)');
+        if (!$trade_channel) {
+            throw new ErrorException('无法正确识别扫码终端(仅支持微信、支付宝、抖音或银联app)');
+        }
         $plainText['trade_channel'] = $trade_channel;
 
         return $this->service->payOrder($plainText);

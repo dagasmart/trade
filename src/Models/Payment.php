@@ -16,7 +16,37 @@ class Payment extends BaseModel
     const DOUYIN = '抖音支付';
     const UNIPAY = '银联支付';
 
+    const SUCCESS = '200';
+    const FAIL = '300';
+    const ERROR = '400';
+
+    const NOPAY = '待付款';
+    const PAYED = '已付款';
+    const REFUNDED = '已退款';
+    const PARTREFUND = '部分退款';
+
     protected array $source = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
+
+    public function sourceOption(): array
+    {
+        return $this->source;
+    }
+
+    public function statusOption(): array
+    {
+        return [
+            '0' => static::NOPAY,
+            '1' => static::PAYED,
+            '-1' => static::REFUNDED,
+            '-2' => static::PARTREFUND,
+        ];
+    }
+
+    public function channelAs($key): string|null
+    {
+       $option = $this->channelOption();
+        return $option[$key] ?? null;
+    }
 
     public function channelOption(): array
     {
@@ -26,12 +56,6 @@ class Payment extends BaseModel
             'douyin' => static::DOUYIN,
             'unipay' => static::UNIPAY,
         ];
-    }
-
-    public function channelAs($key): string|null
-    {
-       $option = $this->channelOption();
-        return $option[$key] ?? null;
     }
 
     /**
