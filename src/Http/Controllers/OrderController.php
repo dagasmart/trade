@@ -2,14 +2,10 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
-use Biz\School\Enums\Enum;
 use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\BizAdmin\Renderers\Form;
 use DagaSmart\BizAdmin\Renderers\Page;
 use DagaSmart\Trade\Services\OrderService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 
 class OrderController extends AdminController
@@ -29,18 +25,14 @@ class OrderController extends AdminController
                     ->size('md')
                     ->clearable()
                     ->placeholder('请输入订单号'),
-                amis()->TextControl('school_name', '学校名称')
-                    ->size('md')
-                    ->clearable()
-                    ->placeholder('学校名称'),
-                amis()->SelectControl('school_nature', '学校性质')
-                    ->options(Enum::Nature)
+                amis()->SelectControl('order_source', '订单来源')
+                    ->options($this->service->sourceOption())
                     ->clearable(),
-                amis()->SelectControl('school_type', '办学类型')
-                    ->options(Enum::Type)
+                amis()->SelectControl('trade_channel', '支付渠道')
+                    ->options($this->service->channelOption())
                     ->clearable(),
                 amis()->Divider(),
-                amis()->DateRangeControl('register_time', '注册登记')
+                amis()->DateRangeControl('trade_time', '交易时间')
                     ->format('YYYY-MM-DD')
                     ->clearValueOnHidden()
             ]))
@@ -96,9 +88,9 @@ class OrderController extends AdminController
                         amis()->TextControl('school_name', '学校名称'),
                         amis()->TextControl('school_code', '学校代码'),
                         amis()->SelectControl('school_nature', '学校性质')
-                            ->options(Enum::Nature),
+                            ->options(),
                         amis()->SelectControl('school_type', '办学类型')
-                            ->options(Enum::Type),
+                            ->options(),
                         amis()->DateControl('register_time', '注册日期'),
                     ]),
 
@@ -160,7 +152,7 @@ class OrderController extends AdminController
         ]);
     }
 
-    public function detail()
+    public function detail(): Form
     {
         return $this->baseDetail()->mode('horizontal')->tabs([
             // 基本信息
@@ -170,9 +162,9 @@ class OrderController extends AdminController
                         amis()->TextControl('id', 'ID'),
                         amis()->TextControl('order_no', '订单号'),
                         amis()->SelectControl('school_nature', '学校性质')
-                            ->options(Enum::Nature),
+                            ->options(),
                         amis()->SelectControl('school_type', '办学类型')
-                            ->options(Enum::Type),
+                            ->options(),
                         amis()->TextControl('register_time', '注册日期'),
                     ]),
 
