@@ -48,7 +48,7 @@ class OrderController extends AdminController
             ->columns([
                 amis()->TableColumn('id', 'ID')->sortable()->set('fixed','left'),
                 amis()->TableColumn('order_no', '订单号')
-                    ->searchable()
+                    ->searchable(['placeholder' => '请输入订单号'])
                     ->copyable()
                     ->width(280)
                     ->set('fixed','left'),
