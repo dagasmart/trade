@@ -31,7 +31,9 @@ class OrderController extends AdminController
                 amis()->SelectControl('trade_channel', '支付渠道')
                     ->options($this->service->channelOption())
                     ->clearable(),
-                amis()->Divider(),
+                amis()->SelectControl('trade_status', '交易状态')
+                    ->options($this->service->statusOption())
+                    ->clearable(),
                 amis()->DateRangeControl('trade_time', '交易时间')
                     ->format('YYYY-MM-DD')
                     ->clearValueOnHidden()
@@ -66,10 +68,10 @@ class OrderController extends AdminController
                     ->searchable(['name' => 'trade_time', 'type' => 'input-date-range'])
                     ->set('width', 150),
                 $this->rowActions([
-                    $this->rowShowButton(true),
-                    $this->rowEditButton(true),
-                    $this->rowDeleteButton(),
-                ])
+                        $this->rowShowButton(true),
+                        $this->rowEditButton(true),
+                        $this->rowDeleteButton(),
+                    ])
                     ->set('width', 200)
                     ->set('align', 'center')
                     ->set('fixed', 'right')
@@ -78,20 +80,25 @@ class OrderController extends AdminController
         return $this->baseList($crud);
     }
 
-    public function form($isEdit = false): Form
+    /**
+     * @param bool $isEdit
+     * @return Form
+     */
+    public function form(bool $isEdit = false): Form
     {
         return $this->baseForm()->mode('horizontal')->tabs([
             // 基本信息
-            amis()->Tab()->title('基本信息')->body([
+            amis()->Tab()->title('订单信息')->body([
+                amis()->TextControl('order_no', '订单号')->static(),
                 amis()->GroupControl()->mode('horizontal')->body([
                     amis()->GroupControl()->direction('vertical')->body([
-                        amis()->TextControl('school_name', '学校名称'),
-                        amis()->TextControl('school_code', '学校代码'),
-                        amis()->SelectControl('school_nature', '学校性质')
-                            ->options(),
-                        amis()->SelectControl('school_type', '办学类型')
-                            ->options(),
-                        amis()->DateControl('register_time', '注册日期'),
+
+                        amis()->TextControl('base_order_no', '原始单号')->static(),
+                        amis()->RadiosControl('order_source', '订单来源')
+                            ->options($this->service->sourceOption())
+                            ->static(),
+                        amis()->DateControl('created_at', '创建时间')->static(),
+                        amis()->DateControl('updated_at', '更新时间')->static(),
                     ]),
 
                     amis()->GroupControl()->direction('vertical')->body([
@@ -115,39 +122,22 @@ class OrderController extends AdminController
                             ]),
                     ]),
                 ]),
+            ]),
+            // 支付信息
+            amis()->Tab()->title('交易信息')->body([
+                amis()->RadiosControl('trade_channel', '支付渠道')
+                    ->options($this->service->channelOption())
+                    ->disabled(),
+                amis()->RadiosControl('trade_status', '交易状态')
+                    ->options($this->service->statusOption())
+                    ->disabled(),
                 amis()->Divider(),
-                amis()->GroupControl()->direction('horizontal')->body([
-                    amis()->TextControl('credit_code', '信用代码'),
-                    amis()->TextControl('legal_person', '学校法人'),
-                ]),
-                amis()->Divider(),
+                amis()->TextControl('trade_no', '交易号')->disabled(),
+                amis()->TextControl('trade_time', '交易时间')->disabled(),
                 amis()->GroupControl()->mode('horizontal')->body([
                     amis()->TextControl('contacts_mobile', '联系电话'),
                     amis()->TextControl('contacts_email', '联系邮件'),
                 ]),
-                amis()->Divider(),
-                amis()->InputCityControl('region', '所在地区')
-                    ->searchable()
-                    ->extractValue(false)
-                    ->required()
-                    ->onEvent([
-                        'change' => [
-                            'actions' => [
-                                [
-                                    'actionType'  => 'setValue',
-                                    'componentId' => 'form_region_info',
-                                    'args'        => [
-                                        'value' => '${value}'
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ]),
-                amis()->HiddenControl('region_info', '地区信息')->id('form_region_info')->static(),
-                amis()->TextControl('school_address', '学校地址'),
-                amis()->TextControl('school_address_info', '详细地址')
-                    ->value('${region_info.province} ${region_info.city} ${region_info.district} ${school_address}')
-                    ->static(),
             ]),
         ]);
     }
