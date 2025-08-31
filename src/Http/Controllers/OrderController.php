@@ -25,10 +25,10 @@ class OrderController extends AdminController
                 ...$this->baseHeaderToolBar()
             ])
             ->filter($this->baseFilter()->body([
-                amis()->TextControl('school_code', '学校代码')
+                amis()->TextControl('order_no', '订单号')
                     ->size('md')
                     ->clearable()
-                    ->placeholder('学校代码'),
+                    ->placeholder('请输入订单号'),
                 amis()->TextControl('school_name', '学校名称')
                     ->size('md')
                     ->clearable()
@@ -67,7 +67,7 @@ class OrderController extends AdminController
                     ->searchable(['name' => 'trade_status', 'type' => 'select', 'options' => $this->service->statusOption(), 'clearable' => true])
                     ->set('type', 'tag')
                     ->set('displayMode', 'rounded')
-                    ->set('color', '${trade_status == 1 ? "#30bf13" : (trade_status == -1 ? "#4096ff" : (trade_status == -2 ? "#ff9326" : ""))}')
+                    ->set('color', '${trade_status == 1 ? "#30bf13" : (trade_status == -1 ? "#4096ff" : (trade_status == -2 ? "#ff9326" : "#ccc"))}')
                     ->set('size', 'xs')
                     ->set('static', true),
                 amis()->TableColumn('trade_time', '交易时间')
