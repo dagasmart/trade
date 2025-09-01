@@ -21,8 +21,10 @@ Route::group([
     $router->resource('stat', Controllers\StatController::class);
     //支付设置
     $router->resource('settings', Controllers\SettingController::class);
-    //订单付款
+    //交易付款
     $router->get('payment/order/{order_no}', [Controllers\PaymentController::class, 'order']);
+    //交易退款
+    $router->put('refund/order/{id}', [Controllers\RefundController::class, 'order']);
 });
 
 //免登录无限制

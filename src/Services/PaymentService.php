@@ -4,7 +4,7 @@ namespace DagaSmart\Trade\Services;
 
 use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Payment;
-use DagaSmart\Trade\Models\TradeOrder;
+use DagaSmart\Trade\Models\Order;
 use ErrorException;
 use Psr\Http\Message\ResponseInterface;
 use Yansongda\Artful\Exception\ContainerException;
@@ -97,7 +97,7 @@ class PaymentService extends AdminService
         //交易订单号
         $trade_order_sn = trade_order_sn($lat, $prefix);
         //更新或新增订单数据
-        $model = new TradeOrder;
+        $model = new Order;
         $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
             [

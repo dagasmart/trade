@@ -6,15 +6,17 @@ use DagaSmart\BizAdmin\Models\BaseModel;
 
 
 /**
- * 交易模型
+ * 订单模型
  */
-class TradeOrder extends BaseModel
+class Order extends BaseModel
 {
 
     protected $table = 'trade_order';
 
     protected $casts = [
         'payer' => 'array',
+        'trade_amount' => 'float',
+        'refund_amount' => 'float',
     ];
 
     protected $appends = ['trade_status_as'];

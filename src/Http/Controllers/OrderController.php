@@ -18,8 +18,8 @@ class OrderController extends AdminController
         $crud = $this->baseCRUD()
             ->filterTogglable()
             ->headerToolbar([
-                $this->createButton(true)->permission('biz.school.create'),
-                ...$this->baseHeaderToolBar()
+                amis('reload')->align('right'),
+                amis('filter-toggler')->align('right'),
             ])
             ->filter($this->baseFilter()->body([
                 amis()->TextControl('order_no', '订单号')
@@ -54,10 +54,13 @@ class OrderController extends AdminController
                     ->set('static', true),
                 amis()->TableColumn('trade_channel', '支付渠道')
                     ->searchable(['name' => 'trade_channel', 'type' => 'select', 'options' => $this->service->channelOption(), 'clearable' => true])
-                    ->set('type', 'select')
+                    ->set('type', 'input-tag')
                     ->set('options', $this->service->channelOption())
                     ->set('static', true),
-                amis()->TableColumn('trade_amount', '交易金额'),
+                amis()->TableColumn('trade_amount', '交易金额')
+                    ->set('type', 'Tpl')
+
+                    ->tpl('<span style="color:orange">支付 ${trade_amount}</span><br>退款 ${refund_amount}<br><span style="color:orangered">成交 ${(trade_amount - refund_amount) | round}</span>'),
                 amis()->TableColumn('trade_status_as', '交易状态')
                     ->searchable(['name' => 'trade_status', 'type' => 'select', 'options' => $this->service->statusOption(), 'clearable' => true])
                     ->set('type', 'tag')
@@ -69,14 +72,12 @@ class OrderController extends AdminController
                     ->searchable(['name' => 'trade_time', 'type' => 'input-date-range', 'format' => 'YYYY-MM-DD'])
                     ->set('width', 150),
                 $this->rowActions([
-                        $this->rowRefundButton(true, '', '退款'),
-                        $this->rowShowButton(true),
-                        //$this->rowEditButton(true),
-                        $this->rowDeleteButton(),
-                    ])
-                    ->set('width', 200)
-                    ->set('align', 'center')
-                    ->set('fixed', 'right')
+                    $this->rowRefundButton(true, '', '退款')->visibleOn('${trade_status == 1 || trade_status == -2}'),
+                    $this->rowShowButton(true),
+                    $this->rowRecordButton('drawer', '', '流水记录'),
+                    //$this->rowEditButton(true),
+                    //$this->rowDeleteButton(),
+                ])->set('width', 200)->set('align', 'right')->set('fixed', 'right')
             ]);
 
         return $this->baseList($crud);
@@ -203,9 +204,8 @@ class OrderController extends AdminController
         ])->static();
     }
 
-
     /**
-     * 授权按钮
+     * 退款按钮
      * @param bool|string $dialog
      * @param string $dialogSize
      * @param string $title
@@ -219,6 +219,89 @@ class OrderController extends AdminController
         if ($dialog) {
             $form = $this
                 ->refundForm(true)
+                ->api('put:/trade/refund/order/${id}')
+                ->redirect('');
+            if ($dialog === 'drawer') {
+                $action = amis()->DrawerAction()->drawer(
+                    amis()->Drawer()->closeOnEsc()->closeOnOutside()->title($title)->body($form)->size($dialogSize)
+                );
+            } else {
+                $action = amis()->DialogAction()->dialog(
+                    amis()->Dialog()->title($title)->body($form)->size($dialogSize)
+                )->actions([
+                    [
+                        'type' => 'buttion',
+                        'label' => '触发确认',
+                        'onEvent' => [
+                            'click' => [
+                                'actions' => [
+                                    [
+                                        'actionType' => 'confirm'
+                                    ]
+                                ]
+                            ]
+
+                        ]
+                    ]
+
+                ]);
+
+
+
+
+
+            }
+        }
+        $action->label($title)->level('link')->visible(admin_user()->administrator());
+        return AdminPipeline::handle(AdminPipeline::PIPE_EDIT_ACTION, $action);
+    }
+
+    /**
+     * 退款
+     * @param bool $isEdit
+     * @return Form
+     */
+    private function refundForm(bool $isEdit = false): Form
+    {
+        return $this->baseForm()->body([
+            amis()->Alert()
+                ->showIcon()
+                ->style([
+                    'color' => 'var(--colors-brand-6)',
+                    'borderStyle' => 'dashed',
+                    'borderColor' => 'var(--colors-brand-6)',
+                    'backgroundColor' => 'var(--Tree-item-onChekced-bg)',
+                ])
+                ->body('提示：<br>退款成功后资金将无法追回,为避免产生纠纷和损失,请谨慎操作'),
+            amis()->HiddenControl('id', 'ID')->static(),
+            amis()->TextControl('order_no', '订单号')->static(),
+            amis()->TextControl('trade_no', '交易号')->static(),
+            amis()->TextControl('trade_amount', '交易金额')->static(),
+            amis()->TagControl('refund_amount', '已退金额')->static(),
+            amis()->TextControl('use_amount', '可退金额')
+                ->addOn('元')
+                ->validations('isNumeric,maximum:${(trade_amount - refund_amount) | round},minimum:0.01')
+                ->size('sm')
+                ->value('${(trade_amount - refund_amount) | round}')
+                ->required(),
+        ]);
+    }
+
+    /**
+     * 流水按钮
+     * @param bool|string $dialog
+     * @param string $dialogSize
+     * @param string $title
+     * @return mixed
+     */
+    protected function rowRecordButton(bool|string $dialog = false, string $dialogSize = 'md', string $title = ''): mixed
+    {
+        $title  = $title ?: admin_trans('admin.log');
+        $action = amis()->LinkAction()->link($this->getEditPath());
+
+        if ($dialog) {
+            $form = $this
+                ->recordForm(true)
                 ->api('put:/biz/school/${id}/auth')
                 ->redirect('');
             if ($dialog === 'drawer') {
@@ -240,7 +323,7 @@ class OrderController extends AdminController
      * @param bool $isEdit
      * @return Form
      */
-    private function refundForm(bool $isEdit = false): Form
+    private function recordForm(bool $isEdit = false): Form
     {
         return $this->baseForm()->body([
             amis()->Alert()

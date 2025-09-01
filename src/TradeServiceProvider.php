@@ -21,7 +21,7 @@ class TradeServiceProvider extends ServiceProvider
             'title' => '交易订单',
             'url' => '/trade/order',
             'url_type' => 1,
-            'icon' => 'iconoir:database-stats',
+            'icon' => 'carbon:ibm-cloud-logging',
         ],
         [
             'parent' => '支付交易',

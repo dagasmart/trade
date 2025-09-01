@@ -4,7 +4,7 @@ namespace DagaSmart\Trade\Services;
 
 use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Payment;
-use DagaSmart\Trade\Models\TradeOrder;
+use DagaSmart\Trade\Models\Order;
 
 
 /**
@@ -12,7 +12,7 @@ use DagaSmart\Trade\Models\TradeOrder;
  */
 class OrderService extends AdminService
 {
-    protected string $modelName = TradeOrder::class;
+    protected string $modelName = Order::class;
 
     public function statusOption(): array
     {

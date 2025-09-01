@@ -4,7 +4,7 @@ namespace DagaSmart\Trade\Services;
 
 use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Payment;
-use DagaSmart\Trade\Models\TradeOrder;
+use DagaSmart\Trade\Models\Order;
 use ErrorException;
 use phpDocumentor\Reflection\DocBlock\Tags\Throws;
 
@@ -21,7 +21,7 @@ class ReturnService extends AdminService
     public function paySave($data)
     {
         throw new ErrorException('我是扣不');
-        $model = new TradeOrder;
+        $model = new Order;
         return admin_transaction(function () use (&$model, $data) {
 
             $row = $model->query()
