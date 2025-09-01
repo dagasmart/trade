@@ -28,9 +28,9 @@ return new class extends Migration
                 $table->string('order_source',20)->nullable()->comment('订单来源：shop商城，soft软件，recharge充值');
                 $table->tinyInteger('trade_type')->default(1)->comment('交易类型：1支付，2退款');
                 $table->string('trade_channel',20)->nullable()->comment('交易渠道：alipay支付宝、wechat微信、douyin抖音、unipay银联');
-                $table->decimal('trade_amount')->nullable()->comment('交易金额');
+                $table->decimal('trade_amount')->nullable()->default(0)->comment('交易金额');
                 $table->tinyInteger('trade_status')->default(0)->comment('交易状态：0待付款，1已付款，-1已退款，-2部分退款');
-                $table->decimal('refund_amount')->nullable()->comment('退款金额');
+                $table->decimal('refund_amount')->nullable()->default(0)->comment('退款金额');
                 $table->timestamp('trade_time')->nullable()->comment('交易时间');
                 $table->string('trade_no',64)->nullable()->comment('交易号');
                 $table->string('trade_code',10)->nullable()->comment('交易码：10000-支付成功');
