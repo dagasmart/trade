@@ -60,7 +60,7 @@ class OrderController extends AdminController
                 amis()->TableColumn('trade_amount', '交易金额')
                     ->set('type', 'Tpl')
 
-                    ->tpl('<span style="color:orange">支付 ${trade_amount}</span><br>退款 ${refund_amount}<br><span style="color:orangered">成交 ${(trade_amount - refund_amount) | round}</span>'),
+                    ->tpl('<span style="color:orange">支付 ${trade_amount}</span><br>退款 ${refund_amount||0}<br><span style="color:orangered">成交 ${(trade_amount - refund_amount) | round}</span>'),
                 amis()->TableColumn('trade_status_as', '交易状态')
                     ->searchable(['name' => 'trade_status', 'type' => 'select', 'options' => $this->service->statusOption(), 'clearable' => true])
                     ->set('type', 'tag')
@@ -301,12 +301,12 @@ class OrderController extends AdminController
 
         if ($dialog) {
             $form = $this
-                ->recordForm(true)
-                ->api('put:/biz/school/${id}/auth')
+                ->recordForm(false)
+                ->api('get:/trade/order/${id}/log')
                 ->redirect('');
             if ($dialog === 'drawer') {
                 $action = amis()->DrawerAction()->drawer(
-                    amis()->Drawer()->closeOnEsc()->closeOnOutside()->title($title)->body($form)->size($dialogSize)
+                    amis()->Drawer()->closeOnEsc()->closeOnOutside()->title($title)->body($form)->actions(false)->size($dialogSize)
                 );
             } else {
                 $action = amis()->DialogAction()->dialog(
@@ -319,32 +319,22 @@ class OrderController extends AdminController
     }
 
     /**
-     * 退款
-     * @param bool $isEdit
-     * @return Form
+     * 流水时间轴
+     * @return Page
      */
-    private function recordForm(bool $isEdit = false): Form
+    private function recordForm(): Page
     {
-        return $this->baseForm()->body([
-            amis()->Alert()
-                ->showIcon()
-                ->style([
-                    'color' => 'var(--colors-brand-6)',
-                    'borderStyle' => 'dashed',
-                    'borderColor' => 'var(--colors-brand-6)',
-                    'backgroundColor' => 'var(--Tree-item-onChekced-bg)',
-                ])
-                ->body('提示：<p>退款成功后将不可恢复</p>'),
-            amis()->HiddenControl('id', 'ID')->static(),
-            amis()->TextControl('order_no', '订单号')->static(),
-            amis()->TextControl('trade_no', '交易号')->static(),
-            amis()->TextControl('trade_amount', '交易金额')->static(),
-            amis()->TextControl('refund_amount', '退款金额')
-                ->addOn('元')
-                ->validations('isNumeric,maximum:${trade_amount},minimum:0.01')
-                ->size('sm')
-                ->required(),
+        return $this->basePage()->body([
+            amis()->Timeline()
+                ->mode('right')
+                ->source('get:/trade/order/${id}/log'),
         ]);
+    }
+
+    public function log($id)
+    {
+        return $this->service->log($id);
+
     }
 
 }

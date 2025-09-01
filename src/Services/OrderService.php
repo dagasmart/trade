@@ -14,6 +14,11 @@ class OrderService extends AdminService
 {
     protected string $modelName = Order::class;
 
+    public function log($id): array
+    {
+        return $this->getModel()->log($id);
+    }
+
     public function statusOption(): array
     {
         $model = new Payment;

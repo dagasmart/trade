@@ -29,6 +29,7 @@ class Order extends BaseModel
         $data = $model->statusOption();
         return $data[$this->trade_status] ?? null;
     }
+
     /**
      * 订单回写
      * @return void
@@ -40,6 +41,27 @@ class Order extends BaseModel
                 $data = get_object_vars($data);
             }
         }
+    }
+
+    /**
+     * 订单流水记录
+     */
+    public function log($id): array
+    {
+        $data = [];
+        $model = new Record;
+        $rows = $model->query()->where(['id' => $id])->get();
+        if ($rows) {
+            foreach ($rows as $k => $row) {
+                $data[$k]['time'] = Payment::typeOption($row->trade_type);
+                $data[$k]['title'] = (string) $row->created_at;
+                $data[$k]['detail'] = $row->trade_amount;
+                $data[$k]['align'] = 'bottom';
+                $data[$k]['color'] = getRandomColor();
+                $data[$k]['backgroundColor'] = '#ccc';
+            }
+        }
+        return $data;
     }
 
 

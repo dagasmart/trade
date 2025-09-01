@@ -25,6 +25,8 @@ Route::group([
     $router->get('payment/order/{order_no}', [Controllers\PaymentController::class, 'order']);
     //交易退款
     $router->put('refund/order/{id}', [Controllers\RefundController::class, 'order']);
+    //交易流水
+    $router->get('order/{id}/log', [Controllers\OrderController::class, 'log']);
 });
 
 //免登录无限制

@@ -19,12 +19,24 @@ class Payment extends BaseModel
     const FAIL = '300';
     const ERROR = '400';
 
+    const PAY = '支付';
+    const REFUND = '退款';
+
     const NOPAY = '待付款';
     const PAYED = '已付款';
     const REFUNDED = '已退款';
     const PARTREFUND = '部分退款';
 
     protected array $source = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
+
+    public static function typeOption($key = null): array|string|null
+    {
+        $data = [
+            '1' => static::PAY,
+            '2' => static::REFUND
+        ];
+        return $key ? ($data[$key] ?? null) : $data;
+    }
 
     public function sourceOption(): array
     {
