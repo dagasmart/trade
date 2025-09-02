@@ -35,6 +35,11 @@ class OrderController extends AdminController
                 amis()->SelectControl('trade_status', '交易状态')
                     ->options($this->service->statusOption())
                     ->clearable(),
+                amis()->Html()->html('<br>'),
+                amis()->TextControl('trade_no', '交易号')
+                    ->size('md')
+                    ->clearable()
+                    ->placeholder('请输入交易号'),
                 amis()->DateRangeControl('trade_time', '交易时间')
                     ->format('YYYY-MM-DD')
                     ->clearValueOnHidden()
@@ -59,8 +64,8 @@ class OrderController extends AdminController
                     ->set('static', true),
                 amis()->TableColumn('trade_amount', '交易金额')
                     ->set('type', 'Tpl')
-
-                    ->tpl('<span style="color:orange">支付 ${trade_amount}</span><br>退款 ${refund_amount||0}<br><span style="color:orangered">成交 ${(trade_amount - refund_amount) | round}</span>'),
+                    ->tpl('<span style="color:orange">支付 ${trade_amount}</span><br>退款 ${refund_amount||0}<br><span style="color:orangered">成交 ${(trade_amount - refund_amount) | round}</span>')
+                    ->width(120),
                 amis()->TableColumn('trade_status_as', '交易状态')
                     ->searchable(['name' => 'trade_status', 'type' => 'select', 'options' => $this->service->statusOption(), 'clearable' => true])
                     ->set('type', 'tag')
@@ -327,6 +332,7 @@ class OrderController extends AdminController
         return $this->basePage()->body([
             amis()->Timeline()
                 ->mode('right')
+                ->direction('vertical')
                 ->source('get:/trade/order/${id}/log'),
         ]);
     }

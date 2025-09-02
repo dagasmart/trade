@@ -45,24 +45,51 @@ class Order extends BaseModel
 
     /**
      * 订单流水记录
+     * @param $id
+     * @return array
      */
     public function log($id): array
     {
         $data = [];
+        $order_amount = $this->query()->where(['id' => $id])->value('trade_amount');
         $model = new Record;
-        $rows = $model->query()->where(['id' => $id])->get();
+        $rows = $model->query()->where(['trade_id' => $id])->orderBy('id')->get();
         if ($rows) {
+            $model = new Payment;
             foreach ($rows as $k => $row) {
-                $data[$k]['time'] = Payment::typeOption($row->trade_type);
-                $data[$k]['title'] = (string) $row->created_at;
-                $data[$k]['detail'] = $row->trade_amount;
-                $data[$k]['align'] = 'bottom';
-                $data[$k]['color'] = getRandomColor();
-                $data[$k]['backgroundColor'] = '#ccc';
+                if (!in_array($row->trade_status, [0,1])) {
+                    $refund_amount = $row->trade_amount;
+                    $order_amount = $order_amount - $refund_amount;
+                }
+                $data[$k]['id'] = $row->id;
+                $data[$k]['time'] = $model->statusOption($row->trade_status);
+                $data[$k]['cardSchema'] = [
+                    'type' => 'card',
+                    'className' => ['p-2' => true, 'shadow' => true],
+                    'header' => [
+                        'title' => (string) $row->created_at,
+                        'subTitle' => $model->typeOption($row->trade_type) . PHP_EOL . (float) $row->trade_amount . '元',
+                        'description' => '操作' . PHP_EOL . $row->opera['user_name'] ?? null,
+                        'avatarText' => $row->opera['user_name'],
+                    ],
+                    'body' => [
+                        amis()->Divider(),
+                        amis()->Html()->html($model->typeOption($row->trade_type)
+                            . ($row->trade_status == 0 ? '中' : '成功，成交金额' . PHP_EOL . '<b class="text-red-500">' . floatval($order_amount) . '</b>元')),
+                    ],
+                ];
+                $data[$k]['align'] = 'top';
+                $data[$k]['color'] = $model->colorOption($row->trade_status);
+                $data[$k]['dotSize'] = $k == 0 ? 'lg' : 'md';
+                $data[$k]['lineColor'] = $data[$k]['color'];
+                $data[$k]['backgroundColor'] = '#bbb';
             }
         }
+        $ids = array_column($data, 'id');
+        array_multisort($data, SORT_DESC, $ids);
         return $data;
     }
+
 
 
 }

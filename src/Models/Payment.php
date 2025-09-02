@@ -29,7 +29,7 @@ class Payment extends BaseModel
 
     protected array $source = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
 
-    public static function typeOption($key = null): array|string|null
+    public function typeOption($key = null): array|string|null
     {
         $data = [
             '1' => static::PAY,
@@ -43,14 +43,15 @@ class Payment extends BaseModel
         return $this->source;
     }
 
-    public function statusOption(): array
+    public function statusOption($key = null): array|string|null
     {
-        return [
+        $data = [
             '0' => static::NOPAY,
             '1' => static::PAYED,
             '-1' => static::REFUNDED,
             '-2' => static::PARTREFUND,
         ];
+        return !is_null($key) ? ($data[$key] ?? null) : $data;
     }
 
     public function channelAs($key): string|null
@@ -59,14 +60,15 @@ class Payment extends BaseModel
         return $option[$key] ?? null;
     }
 
-    public function channelOption(): array
+    public function channelOption($key = null): array|string|null
     {
-        return [
+        $data = [
             'alipay' => static::ALIAPY,
             'wechat' => static::WECHAT,
             'douyin' => static::DOUYIN,
             'unipay' => static::UNIPAY,
         ];
+        return $key ? ($data[$key] ?? null) : $data;
     }
 
     /**
@@ -87,6 +89,27 @@ class Payment extends BaseModel
     public function source($key = null): array|string|null
     {
         return $key ? ($this->source[$key] ?? null) : $this->source;
+    }
+
+    /**
+     * 颜色标记
+     * @param null $key
+     * @return array|string|null
+     */
+    public function colorOption($key = null): array|string|null
+    {
+        $data = [
+            '-3' => '#000',
+            '-2' => '#ff9326',
+            '-1' => '#4096ff',
+            '0' => '#cccccc',
+            '1' => '#30bf13',
+            '2' => '#000',
+            '3' => '#000',
+            '4' => '#000',
+            '5' => '#000',
+        ];
+        return $key ? ($data[$key] ?? null) : $data;
     }
 
 }
