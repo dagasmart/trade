@@ -27,6 +27,10 @@ class Payment extends BaseModel
     const REFUNDED = '已退款';
     const PARTREFUND = '部分退款';
 
+    const OPERA_USER = '用户';
+    const OPERA_MER = '商户';
+    const OPERA_PLAT = '平台';
+
     protected array $source = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
 
     public function typeOption($key = null): array|string|null
@@ -67,6 +71,16 @@ class Payment extends BaseModel
             'wechat' => static::WECHAT,
             'douyin' => static::DOUYIN,
             'unipay' => static::UNIPAY,
+        ];
+        return $key ? ($data[$key] ?? null) : $data;
+    }
+
+    public function operaOption($key = null): array|string|null
+    {
+        $data = [
+            'user' => static::OPERA_USER,
+            'mer' => static::OPERA_MER,
+            'plat' => static::OPERA_PLAT,
         ];
         return $key ? ($data[$key] ?? null) : $data;
     }

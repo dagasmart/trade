@@ -26,12 +26,12 @@ class RefundController extends AdminController
         $id = $request->id ?? null;
         admin_abort_if(!$id, '交易id不能为空');
 
-        $use_amount = $request->use_amount ?? null;
-        admin_abort_if(!$use_amount, '可退款金额不能为空');
-        admin_abort_if(!is_numeric($use_amount), '可退款金额必须数字');
-        admin_abort_if($use_amount <= 0, '可退款金额必须大于0');
+        $amount = $request->use_amount ?? null; //可退金额
+        admin_abort_if(!$amount, '可退款金额不能为空');
+        admin_abort_if(!is_numeric($amount), '可退款金额必须数字');
+        admin_abort_if($amount <= 0, '可退款金额必须大于0');
 
-        if ($this->service->refundOrder($id, $use_amount)) {
+        if ($this->service->refundOrder($id, $amount)) {
             return $this->response()->successMessage('退款操作成功');
         }
         return $this->response()->fail('退款操作失败');

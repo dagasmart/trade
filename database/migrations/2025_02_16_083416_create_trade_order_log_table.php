@@ -30,15 +30,15 @@ return new class extends Migration
                 $table->tinyInteger('trade_status')->default(0)->comment('交易状态：0待付款，1已付款，-1已退款，-2部分退款');
                 $table->string('trade_code',10)->nullable()->comment('交易码：10000-支付成功');
                 $table->jsonb('trade_result')->nullable()->comment('交易结果');
-                $table->string('opera_type',10)->nullable()->comment('操作类别，user用户，mer商户，plat平台');
+                $table->string('opera_type',10)->default('user')->comment('操作类别，user用户，mer商户，plat平台');
                 $table->bigInteger('opera_id')->comment('操作人id');
                 $table->json('opera')->comment('操作人信息');
+                $table->string('tag')->nullable()->comment('标记');
 
                 $table->string('module', 50)->nullable()->comment('模块');
                 $table->bigInteger('mer_id')->nullable()->comment('商户id');
 
-                $table->index(['id','trade_id','order_no','created_at','opera_id']);
-                $table->unique(['order_no']);
+                $table->index(['id','trade_id','order_no','trade_channel','trade_type','trade_status','opera_id','module','mer_id','created_at']);
 
                 $table->timestamps();
             });

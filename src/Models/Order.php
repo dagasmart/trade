@@ -69,8 +69,8 @@ class Order extends BaseModel
                     'header' => [
                         'title' => (string) $row->created_at,
                         'subTitle' => $model->typeOption($row->trade_type) . PHP_EOL . (float) $row->trade_amount . '元',
-                        'description' => '操作' . PHP_EOL . $row->opera['user_name'] ?? null,
-                        'avatarText' => $row->opera['user_name'],
+                        'description' => '操作' . PHP_EOL . ($row->opera['user_name'] ?? null),
+                        'avatarText' => $model->operaOption($row->opera_type),
                     ],
                     'body' => [
                         amis()->Divider(),
