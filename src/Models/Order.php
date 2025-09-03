@@ -23,7 +23,7 @@ class Order extends BaseModel
 
     protected $appends = ['trade_status_as'];
 
-    protected $fillable = ['order_id','order_no','base_order_no','order_source','trade_channel','trade_no','trade_amount','is_plat','module','mer_id','payer_id','payer'];
+    protected $fillable = ['order_id','order_no','base_order_no','order_source','trade_channel','trade_no','trade_amount','trade_status','is_plat','module','mer_id','payer_id','payer'];
 
     public function getTradeStatusAsAttribute(): ?string
     {

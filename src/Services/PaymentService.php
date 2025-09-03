@@ -24,9 +24,10 @@ class PaymentService extends AdminService
 
     /**
      * @param $data
+     * @return ResponseInterface|true|Rocket|Collection
      * @throws ErrorException
      */
-    public function payOrder($data)
+    public function payOrder($data): true|Collection|ResponseInterface|Rocket
     {
         $source = $data['source'] ?? null;
         if (!$source) {
@@ -55,8 +56,6 @@ class PaymentService extends AdminService
         if (!$switch) {
             throw new ErrorException('未开启支付功能');
         }
-
-
 
         $order_id = $data['order_id'] ?? null;
 
@@ -102,15 +101,16 @@ class PaymentService extends AdminService
         $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
             [
-                'order_id' => $order_id,
-                'base_order_no' => $base_order_no,
-                'order_source' => $source,
-                'trade_channel' => $trade_channel,
-                'trade_status' => 0,
-                'is_plat' => $is_plat,
-                'module' => $module,
-                'mer_id' => $mer_id,
-                'payer_id' => $user_id,
+//                'order_id' => $order_id,
+                'order_no' => $trade_order_sn,
+//                'base_order_no' => $base_order_no,
+//                'order_source' => $source,
+//                'trade_channel' => $trade_channel,
+//                'trade_status' => 0,
+//                'is_plat' => $is_plat,
+//                'module' => $module,
+//                'mer_id' => $mer_id,
+//                'payer_id' => $user_id,
             ],
             // 新记录的默认值或需要更新的字段和值
             [
