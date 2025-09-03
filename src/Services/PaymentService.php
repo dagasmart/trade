@@ -118,7 +118,6 @@ class PaymentService extends AdminService
                 'order_no' => $trade_order_sn,
                 'base_order_no' => $base_order_no,
                 'order_source' => $source,
-                'trade_type' => 1,
                 'trade_channel' => $trade_channel,
                 'trade_amount' => $pay_amount,
                 'is_plat' => $is_plat,
