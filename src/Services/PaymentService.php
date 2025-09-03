@@ -5,6 +5,7 @@ namespace DagaSmart\Trade\Services;
 use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Payment;
 use DagaSmart\Trade\Models\Order;
+use DagaSmart\Trade\Models\Record;
 use ErrorException;
 use Psr\Http\Message\ResponseInterface;
 use Yansongda\Artful\Exception\ContainerException;
@@ -130,8 +131,26 @@ class PaymentService extends AdminService
 
         $record = (object) $record->toArray();
 
-        try {
+        //记录流水
+        if ($record) {
+            $log = [
+                'trade_id' => $record->id,
+                'order_no' => $record->order_no,
+                'trade_type' => in_array($record->trade_status, [0,1]) ? 1 : 2,
+                'trade_channel' => $record->trade_channel,
+                'trade_amount' => $record->trade_amount,
+                'trade_status' => $record->trade_status,
+                'trade_code' => $record->trade_code,
+                'trade_result' => $record->trade_result,
+                'opera_type' => in_array($record->trade_status, [0,1]) ? 'user' : (admin_mer_id() ? 'mer' : 'plat'),
+                'opera_id' => $record->payer_id,
+                'opera' => $record->payer,
+            ];
+            $model = new Record;
+            $model->query()->insert($log);
+        }
 
+        try {
             Pay::config($config);
             //支付宝
             if ($trade_channel == 'alipay') {
