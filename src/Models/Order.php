@@ -61,7 +61,7 @@ class Order extends BaseModel
             foreach ($rows as $k => $row) {
                 if (!in_array($row->trade_status, [0,1])) {
                     $refund_amount = $row->trade_amount;
-                    $order_amount = bcsub($order_amount - $refund_amount,2);
+                    $order_amount = bcsub($order_amount, $refund_amount,2);
                 }
                 $data[$k]['id'] = $row->id;
                 $data[$k]['time'] = $model->statusOption($row->trade_status);
