@@ -61,7 +61,7 @@ class Order extends BaseModel
             foreach ($rows as $k => $row) {
                 if (!in_array($row->trade_status, [0,1])) {
                     $refund_amount = $row->trade_amount;
-                    $order_amount = $order_amount - $refund_amount;
+                    $order_amount = (float) $order_amount - $refund_amount;
                 }
                 $data[$k]['id'] = $row->id;
                 $data[$k]['time'] = $model->statusOption($row->trade_status);
@@ -77,7 +77,7 @@ class Order extends BaseModel
                     'body' => [
                         amis()->Divider(),
                         amis()->Html()->html($model->typeOption($row->trade_type)
-                            . ($row->trade_status == 0 ? '中' : '成功，成交金额' . PHP_EOL . '<b class="text-red-500">' . floatval($order_amount) . '</b>元')),
+                            . ($row->trade_status == 0 ? '中' : '成功，成交金额' . PHP_EOL . '<b class="text-red-500">' . $order_amount . '</b>元')),
                     ],
                 ];
                 $data[$k]['align'] = 'top';
