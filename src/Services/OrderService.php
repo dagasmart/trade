@@ -14,6 +14,19 @@ class OrderService extends AdminService
 {
     protected string $modelName = Order::class;
 
+    /**
+     * 排序
+     * @param $query
+     * @return void
+     */
+    public function sortable($query): void
+    {
+        if (!request()->orderBy) {
+            $query->orderBy($this->primaryKey(),'desc');
+        }
+        parent::sortable($query);
+    }
+
     public function log($id): array
     {
         return $this->getModel()->log($id);

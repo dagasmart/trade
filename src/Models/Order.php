@@ -13,6 +13,8 @@ class Order extends BaseModel
 
     protected $table = 'trade_order';
 
+    protected $primaryKey = 'id';
+
     protected $casts = [
         'payer' => 'array',
         'trade_amount' => 'float',
