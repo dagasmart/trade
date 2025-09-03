@@ -28,7 +28,7 @@ class Payment extends BaseModel
     const PARTREFUND = '部分退款';
 
     const OPERA_USER = '用户';
-    const OPERA_MER = '商户';
+    const OPERA_MER = '商家';
     const OPERA_PLAT = '平台';
 
     protected array $source = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
