@@ -101,12 +101,12 @@ class PaymentService extends AdminService
         $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
             [
-//                'order_id' => $order_id,
+                'order_id' => $order_id,
                 'order_no' => $trade_order_sn,
-//                'base_order_no' => $base_order_no,
+                'base_order_no' => $base_order_no,
 //                'order_source' => $source,
 //                'trade_channel' => $trade_channel,
-//                'trade_status' => 0,
+                'trade_status' => 0,
 //                'is_plat' => $is_plat,
 //                'module' => $module,
 //                'mer_id' => $mer_id,
