@@ -35,7 +35,7 @@ class PaymentService extends AdminService
         }
         $module = $data['module'] ?? null;
         $mer_id = $data['mer_id'] ?? null;
-        $user_id = $data['user_id'] ?? null;
+
         $is_plat = $data['is_plat'] ?? in_array($source, $this->modelName->plat);
         //非平台订单时，商户必须存在
         if (!$is_plat) {
@@ -90,6 +90,16 @@ class PaymentService extends AdminService
             }
         }
 
+        //获取付款人
+        $payer_id = $data['payer_id'] ?? null;
+        $payer = $data['payer'] ?? null;
+        if (!$payer_id) {
+            throw new ErrorException($trade_channel_as . '付款人ID不存在：payer_id');
+        }
+        if (!$payer) {
+            throw new ErrorException($trade_channel_as . '付款人信息不存在：payer');
+        }
+
         //订单微秒时间戳
         $lat = $data['lat'] ?? null;
         //订单前缀
@@ -102,11 +112,11 @@ class PaymentService extends AdminService
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
             [
                 'order_id' => $order_id,
-                'order_no' => $trade_order_sn,
+//                'order_no' => $trade_order_sn,
                 'base_order_no' => $base_order_no,
-//                'order_source' => $source,
+                'order_source' => $source,
 //                'trade_channel' => $trade_channel,
-                'trade_status' => 0,
+//                'trade_status' => 0,
 //                'is_plat' => $is_plat,
 //                'module' => $module,
 //                'mer_id' => $mer_id,
@@ -123,8 +133,8 @@ class PaymentService extends AdminService
                 'is_plat' => $is_plat,
                 'module' => $module,
                 'mer_id' => $mer_id,
-                'payer_id' => 1,
-                'payer' => json_encode(['user_id' => 1, 'user_name' => 'admin'],JSON_UNESCAPED_UNICODE)
+                'payer_id' => $payer_id,
+                'payer' => json_encode($payer,JSON_UNESCAPED_UNICODE)
             ]
         );
 
