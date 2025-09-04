@@ -108,6 +108,13 @@ class PaymentService extends AdminService
         $trade_order_sn = trade_order_sn($lat, $prefix);
         //更新或新增订单数据
         $model = new Order;
+        $exists = $model->query()
+            ->where(['order_id' => $order_id, 'order_source' => $source])
+            ->whereNotIn('trade_status',[0]) //排除待付状态
+            ->exists();
+        if($exists){
+            throw new ErrorException($trade_channel_as . '交易订单已付款，请勿重复');
+        }
         $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
             [
@@ -128,8 +135,9 @@ class PaymentService extends AdminService
                 'order_no' => $trade_order_sn,
                 'base_order_no' => $base_order_no,
                 'order_source' => $source,
+                'order_amount' => $pay_amount, //付款金额
                 'trade_channel' => $trade_channel,
-                'trade_amount' => $pay_amount,
+                'trade_amount' => $pay_amount - 99.95, //实付金额 = 付款金额 - 折扣优惠
                 'is_plat' => $is_plat,
                 'module' => $module,
                 'mer_id' => $mer_id,
@@ -165,7 +173,7 @@ class PaymentService extends AdminService
             if ($trade_channel == 'alipay') {
                 return Pay::alipay()->h5([
                     'out_trade_no' => $record->order_no,
-                    'total_amount' => 0.05,//$record->trade_amount,
+                    'total_amount' => $record->trade_amount,
                     'subject' => $this->getModel()->source($record->order_source),
                     'quit_url' => 'https://bus.dagasmart.com',
                 ]);
