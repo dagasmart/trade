@@ -113,7 +113,8 @@ class PaymentService extends AdminService
             ->whereNotIn('trade_status',[0]) //排除待付状态
             ->exists();
         if($exists){
-            return throw new ErrorException($trade_channel_as . '交易订单已付款，请勿重复');
+            abort(404, $trade_channel_as . '交易订单已付款，请勿重复');
+            //return throw new ErrorException($trade_channel_as . '交易订单已付款，请勿重复');
         }
         $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
