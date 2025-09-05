@@ -10,36 +10,28 @@ use DagaSmart\BizAdmin\Models\BaseModel;
  */
 class Payment extends BaseModel
 {
-    const ALIAPY = ['alipay' => '支付宝'];
-    const WECHAT = ['wechat' => '微信支付'];
-    const DOUYIN = ['douyin' => '抖音支付'];
-    const UNIPAY = ['unipay' => '银联支付'];
+    //交易渠道
+    const CHANNEL = ['alipay' => '支付宝', 'wechat' => '微信支付', 'douyin' => '抖音支付', 'unipay' => '银联支付'];
 
     const SUCCESS = '200';
     const FAIL = '300';
     const ERROR = '400';
 
-    const PAY = ['1' => '支付'];
-    const REFUND = ['2' => '退款'];
+    //交易类别
+    const TYPE = ['1' => '支付', '2' => '退款'];
 
-    const NOPAY = ['0' => '待付款'];
-    const PAYED = ['1' => '已付款'];
-    const REFUNDED = ['-1' => '已退款'];
-    const PARTREFUND = ['-2' => '部分退款'];
+    //交易状态
+    const STATUS = ['0' => '待付款', '1' => '已付款', '-1' => '已退款', '-2' => '部分退款'];
 
-    const OPERA_USER = ['user' => '用户'];
-    const OPERA_MER = ['mer' => '商家'];
-    const OPERA_PLAT = ['plat' => '平台'];
+    //操作类别
+    const OPERA = ['user' => '用户', 'mer' => '商家', 'plat' => '平台'];
 
-    const SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
+    const SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城',
+    ];
 
     public function typeOption($key = null): array|string|null
     {
-        $data = [
-            static::PAY,
-            static::REFUND
-        ];
-        return $key ? ($data[$key] ?? null) : $data;
+        return $key ? (static::TYPE[$key] ?? null) : static::TYPE;
     }
 
     public function sourceOption(): array
@@ -49,13 +41,7 @@ class Payment extends BaseModel
 
     public function statusOption($key = null): array|string|null
     {
-        $data = [
-            static::NOPAY,
-            static::PAYED,
-            static::REFUNDED,
-            static::PARTREFUND,
-        ];
-        return !is_null($key) ? ($data[$key] ?? null) : $data;
+        return !is_null($key) ? (static::STATUS[$key] ?? null) : static::STATUS;
     }
 
     public function channelAs($key): string|null
@@ -66,23 +52,12 @@ class Payment extends BaseModel
 
     public function channelOption($key = null): array|string|null
     {
-        $data = [
-            static::ALIAPY,
-            static::WECHAT,
-            static::DOUYIN,
-            static::UNIPAY,
-        ];
-        return $key ? ($data[$key] ?? null) : $data;
+        return $key ? (static::CHANNEL[$key] ?? null) : static::CHANNEL;
     }
 
     public function operaOption($key = null): array|string|null
     {
-        $data = [
-            static::OPERA_USER,
-            static::OPERA_MER,
-            static::OPERA_PLAT,
-        ];
-        return $key ? ($data[$key] ?? null) : $data;
+        return $key ? (static::OPERA[$key] ?? null) : static::OPERA;
     }
 
     /**
