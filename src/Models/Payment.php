@@ -10,50 +10,50 @@ use DagaSmart\BizAdmin\Models\BaseModel;
  */
 class Payment extends BaseModel
 {
-    const ALIAPY = '支付宝';
-    const WECHAT = '微信支付';
-    const DOUYIN = '抖音支付';
-    const UNIPAY = '银联支付';
+    const ALIAPY = ['alipay' => '支付宝'];
+    const WECHAT = ['wechat' => '微信支付'];
+    const DOUYIN = ['douyin' => '抖音支付'];
+    const UNIPAY = ['unipay' => '银联支付'];
 
     const SUCCESS = '200';
     const FAIL = '300';
     const ERROR = '400';
 
-    const PAY = '支付';
-    const REFUND = '退款';
+    const PAY = ['1' => '支付'];
+    const REFUND = ['2' => '退款'];
 
-    const NOPAY = '待付款';
-    const PAYED = '已付款';
-    const REFUNDED = '已退款';
-    const PARTREFUND = '部分退款';
+    const NOPAY = ['0' => '待付款'];
+    const PAYED = ['1' => '已付款'];
+    const REFUNDED = ['-1' => '已退款'];
+    const PARTREFUND = ['-2' => '部分退款'];
 
-    const OPERA_USER = '用户';
-    const OPERA_MER = '商家';
-    const OPERA_PLAT = '平台';
+    const OPERA_USER = ['user' => '用户'];
+    const OPERA_MER = ['mer' => '商家'];
+    const OPERA_PLAT = ['plat' => '平台'];
 
-    protected array $source = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
+    const SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
 
     public function typeOption($key = null): array|string|null
     {
         $data = [
-            '1' => static::PAY,
-            '2' => static::REFUND
+            static::PAY,
+            static::REFUND
         ];
         return $key ? ($data[$key] ?? null) : $data;
     }
 
     public function sourceOption(): array
     {
-        return $this->source;
+        return static::SOURCE;
     }
 
     public function statusOption($key = null): array|string|null
     {
         $data = [
-            '0' => static::NOPAY,
-            '1' => static::PAYED,
-            '-1' => static::REFUNDED,
-            '-2' => static::PARTREFUND,
+            static::NOPAY,
+            static::PAYED,
+            static::REFUNDED,
+            static::PARTREFUND,
         ];
         return !is_null($key) ? ($data[$key] ?? null) : $data;
     }
@@ -67,10 +67,10 @@ class Payment extends BaseModel
     public function channelOption($key = null): array|string|null
     {
         $data = [
-            'alipay' => static::ALIAPY,
-            'wechat' => static::WECHAT,
-            'douyin' => static::DOUYIN,
-            'unipay' => static::UNIPAY,
+            static::ALIAPY,
+            static::WECHAT,
+            static::DOUYIN,
+            static::UNIPAY,
         ];
         return $key ? ($data[$key] ?? null) : $data;
     }
@@ -78,9 +78,9 @@ class Payment extends BaseModel
     public function operaOption($key = null): array|string|null
     {
         $data = [
-            'user' => static::OPERA_USER,
-            'mer' => static::OPERA_MER,
-            'plat' => static::OPERA_PLAT,
+            static::OPERA_USER,
+            static::OPERA_MER,
+            static::OPERA_PLAT,
         ];
         return $key ? ($data[$key] ?? null) : $data;
     }
@@ -92,7 +92,7 @@ class Payment extends BaseModel
      */
     public function isPlat($key): bool
     {
-        return in_array($key, array_keys($this->source));
+        return in_array($key, array_keys(static::SOURCE));
     }
 
     /**
@@ -102,7 +102,7 @@ class Payment extends BaseModel
      */
     public function source($key = null): array|string|null
     {
-        return $key ? ($this->source[$key] ?? null) : $this->source;
+        return $key ? (static::SOURCE[$key] ?? null) : static::SOURCE;
     }
 
     /**

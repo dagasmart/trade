@@ -148,7 +148,7 @@ class PaymentService extends AdminService
         $record = (object) $record->toArray();
 
         //记录流水
-        if ($record) {
+        if (!$exists && $record) {
             $log = [
                 'trade_id' => $record->id,
                 'order_no' => $record->order_no,
