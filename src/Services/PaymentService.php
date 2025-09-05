@@ -29,6 +29,11 @@ class PaymentService extends AdminService
      */
     public function payOrder($data): true|Collection|ResponseInterface|Rocket
     {
+        try {
+            abort(403, '未开启支付通道');
+        } catch (ErrorException $e) {
+            abort(403, '未开启支付通道33333');
+        }
         $source = $data['source'] ?? null;
         if (!$source) {
             abort(403, '订单来源不能为空：source');
