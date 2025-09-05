@@ -136,7 +136,7 @@ class PaymentService extends AdminService
                 'order_source' => $source,
                 'order_amount' => $pay_amount, //付款金额
                 'trade_channel' => $trade_channel,
-                'trade_amount' => $pay_amount - 99.95, //实付金额 = 付款金额 - 折扣优惠
+                'trade_amount' => bcsub($pay_amount, 99.95, 2), //实付金额 = 付款金额 - 折扣优惠
                 'is_plat' => $is_plat,
                 'module' => $module,
                 'mer_id' => $mer_id,
