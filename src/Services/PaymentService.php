@@ -24,19 +24,13 @@ class PaymentService extends AdminService
 
     /**
      * @param $data
-     * @return ResponseInterface|true|Rocket|Collection
-     * @throws ErrorException
+     * @return bool|ResponseInterface|Rocket|Collection
      */
-    public function payOrder($data): true|Collection|ResponseInterface|Rocket
+    public function payOrder($data): Collection|bool|ResponseInterface|Rocket
     {
-        try {
-            abort(403, '未开启支付通道');
-        } catch (ErrorException $e) {
-            abort(403, '未开启支付通道33333');
-        }
         $source = $data['source'] ?? null;
         if (!$source) {
-            abort(403, '订单来源不能为空：source');
+            abort_alert(403, '订单来源不能为空：source');
         }
         $module = $data['module'] ?? null;
         $mer_id = $data['mer_id'] ?? null;
@@ -45,10 +39,10 @@ class PaymentService extends AdminService
         //非平台订单时，商户必须存在
         if (!$is_plat) {
             if (!$module) {
-                abort(403, '模块不能为空：module');
+                abort_alert(403, '模块不能为空：module');
             }
             if (!$mer_id) {
-                abort(403, '商户不能为空：mer_id');
+                abort_alert(403, '商户不能为空：mer_id');
             }
         }
         $cfg = [];
@@ -59,39 +53,39 @@ class PaymentService extends AdminService
 
         $switch = $config['switch'] ?? null;
         if (!$switch) {
-            abort(403, '未开启支付功能');
+            abort_alert(403, '未开启支付功能');
         }
 
         $order_id = $data['order_id'] ?? null;
 
         $base_order_no = $data['order_no'] ?? null;
         if (!$base_order_no) {
-            abort(403, '订单号不能为空：order_no');
+            abort_alert(403, '订单号不能为空：order_no');
         }
 
         $trade_channel = $data['trade_channel'] ?? null;
         $trade_channel_as = $this->getModel()->channelAs($trade_channel);
         if (!$trade_channel) {
-            abort(403, $trade_channel_as . '支付通道不能为空：trade_channel');
+            abort_alert(403, $trade_channel_as . '支付通道不能为空：trade_channel');
         }
 
         $trade_channel_config = $config[$trade_channel] ?? null;
         if (!$trade_channel_config) {
-            abort(403, $trade_channel_as . '未配置');
+            abort_alert(403, $trade_channel_as . '未配置');
         }
 
         $trade_channel_config_default = $trade_channel_config['default'] ?? null;
         if (!$trade_channel_config_default) {
-            abort(403, $trade_channel_as . '未配置默认参数组：defaut');
+            abort_alert(403, $trade_channel_as . '未配置默认参数组：defaut');
         }
 
         $pay_amount = $data['pay_amount'] ?? 0;
         $trade_channel_config_default_switch = $trade_channel_config_default['switch'] ?? null;
         if (!$trade_channel_config_default_switch) {
             if ($pay_amount <= 0) {
-                abort(403, $trade_channel_as . '金额无效: amount=' . $pay_amount);
+                abort_alert(403, $trade_channel_as . '金额无效: amount=' . $pay_amount);
             }else {
-                abort(403, $trade_channel_as . '未开启支付通道');
+                abort_alert(403, $trade_channel_as . '未开启支付通道');
             }
         }
 
@@ -99,10 +93,10 @@ class PaymentService extends AdminService
         $payer_id = $data['payer_id'] ?? null;
         $payer = $data['payer'] ?? null;
         if (!$payer_id) {
-            abort(403, $trade_channel_as . '付款人ID不存在：payer_id');
+            abort_alert(403, $trade_channel_as . '付款人ID不存在：payer_id');
         }
         if (!$payer) {
-            abort(403, $trade_channel_as . '付款人信息不存在：payer');
+            abort_alert(403, $trade_channel_as . '付款人信息不存在：payer');
         }
 
         //订单微秒时间戳
@@ -118,7 +112,7 @@ class PaymentService extends AdminService
             ->whereNotIn('trade_status',[0]) //排除待付状态
             ->exists();
         if($exists){
-            abort(403, $trade_channel_as . '交易订单已付款，请勿重复');
+            abort_alert(403, $trade_channel_as . '交易订单已付款，请勿重复');
         }
         $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
@@ -212,8 +206,9 @@ class PaymentService extends AdminService
             }
             return true;
         } catch (ContainerException $e) {
-            abort(403, '交易异常，请稍候重试：' . $e->getMessage());
+            abort_alert(403, '交易异常，请稍候重试：' . $e->getMessage());
         }
+        return false;
     }
 
 
