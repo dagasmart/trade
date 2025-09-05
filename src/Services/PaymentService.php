@@ -31,7 +31,7 @@ class PaymentService extends AdminService
     {
         $source = $data['source'] ?? null;
         if (!$source) {
-            throw new ErrorException('订单来源不能为空：source');
+            abort(403, '订单来源不能为空：source');
         }
         $module = $data['module'] ?? null;
         $mer_id = $data['mer_id'] ?? null;
@@ -40,10 +40,10 @@ class PaymentService extends AdminService
         //非平台订单时，商户必须存在
         if (!$is_plat) {
             if (!$module) {
-                throw new ErrorException('模块不能为空：module');
+                abort(403, '模块不能为空：module');
             }
             if (!$mer_id) {
-                throw new ErrorException('商户不能为空：mer_id');
+                abort(403, '商户不能为空：mer_id');
             }
         }
         $cfg = [];
@@ -54,39 +54,39 @@ class PaymentService extends AdminService
 
         $switch = $config['switch'] ?? null;
         if (!$switch) {
-            throw new ErrorException('未开启支付功能');
+            abort(403, '未开启支付功能');
         }
 
         $order_id = $data['order_id'] ?? null;
 
         $base_order_no = $data['order_no'] ?? null;
         if (!$base_order_no) {
-            throw new ErrorException('订单号不能为空：order_no');
+            abort(403, '订单号不能为空：order_no');
         }
 
         $trade_channel = $data['trade_channel'] ?? null;
         $trade_channel_as = $this->getModel()->channelAs($trade_channel);
         if (!$trade_channel) {
-            throw new ErrorException($trade_channel_as . '支付通道不能为空：trade_channel');
+            abort(403, $trade_channel_as . '支付通道不能为空：trade_channel');
         }
 
         $trade_channel_config = $config[$trade_channel] ?? null;
         if (!$trade_channel_config) {
-            throw new ErrorException($trade_channel_as . '未配置');
+            abort(403, $trade_channel_as . '未配置');
         }
 
         $trade_channel_config_default = $trade_channel_config['default'] ?? null;
         if (!$trade_channel_config_default) {
-            throw new ErrorException($trade_channel_as . '未配置默认参数组：defaut');
+            abort(403, $trade_channel_as . '未配置默认参数组：defaut');
         }
 
         $pay_amount = $data['pay_amount'] ?? 0;
         $trade_channel_config_default_switch = $trade_channel_config_default['switch'] ?? null;
         if (!$trade_channel_config_default_switch) {
             if ($pay_amount <= 0) {
-                throw new ErrorException($trade_channel_as . '金额无效: amount=' . $pay_amount);
+                abort(403, $trade_channel_as . '金额无效: amount=' . $pay_amount);
             }else {
-                throw new ErrorException($trade_channel_as . '未开启支付通道');
+                abort(403, $trade_channel_as . '未开启支付通道');
             }
         }
 
@@ -94,10 +94,10 @@ class PaymentService extends AdminService
         $payer_id = $data['payer_id'] ?? null;
         $payer = $data['payer'] ?? null;
         if (!$payer_id) {
-            throw new ErrorException($trade_channel_as . '付款人ID不存在：payer_id');
+            abort(403, $trade_channel_as . '付款人ID不存在：payer_id');
         }
         if (!$payer) {
-            throw new ErrorException($trade_channel_as . '付款人信息不存在：payer');
+            abort(403, $trade_channel_as . '付款人信息不存在：payer');
         }
 
         //订单微秒时间戳
@@ -113,7 +113,7 @@ class PaymentService extends AdminService
             ->whereNotIn('trade_status',[0]) //排除待付状态
             ->exists();
         if($exists){
-            throw new ErrorException($trade_channel_as . '交易订单已付款，请勿重复');
+            abort(403, $trade_channel_as . '交易订单已付款，请勿重复');
         }
         $record = $model->query()->updateOrCreate(
             // 查找条件，如果找不到，则按这些条件创建新记录，并更新这些字段的值
@@ -207,7 +207,7 @@ class PaymentService extends AdminService
             }
             return true;
         } catch (ContainerException $e) {
-            throw new ErrorException('交易异常，请稍候重试：' . $e->getMessage());
+            abort(403, '交易异常，请稍候重试：' . $e->getMessage());
         }
     }
 

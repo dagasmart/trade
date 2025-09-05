@@ -29,7 +29,9 @@ class PaymentController extends AdminController
         $ciphertext = $request->ciphertext ?? null;
         $plainText = $aes->decrypt($ciphertext);
         if(!$plainText) {
-            throw new ErrorException('无法正确解析订单信息');
+            //throw new ErrorException('无法正确解析订单信息');
+            abort(403, '无法正确解析订单信息');
+            //return response()->json(['error' => '无法正确识别扫码终端(仅支持微信、支付宝、抖音或银联app)'], 403);
         }
         //判断扫描二维码的APP
         IF(str_contains($_SERVER['HTTP_USER_AGENT'], 'QQ')) {
@@ -46,7 +48,7 @@ class PaymentController extends AdminController
             $trade_channel = 'alipay';
         }
         if (!$trade_channel) {
-            throw new ErrorException('无法正确识别扫码终端(仅支持微信、支付宝、抖音或银联app)');
+            abort(403, '无法正确识别扫码终端(仅支持微信、支付宝、抖音或银联app)');
         }
         $plainText['trade_channel'] = $trade_channel;
 
