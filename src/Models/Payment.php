@@ -13,9 +13,7 @@ class Payment extends BaseModel
     //交易渠道
     const CHANNEL = ['alipay' => '支付宝', 'wechat' => '微信支付', 'douyin' => '抖音支付', 'unipay' => '银联支付'];
 
-    const SUCCESS = '200';
-    const FAIL = '300';
-    const ERROR = '400';
+    const CODE = ['200' => '成功', '300' => '失败', '400' => '错误'];
 
     //交易类别
     const TYPE = ['1' => '支付', '2' => '退款'];
@@ -26,35 +24,42 @@ class Payment extends BaseModel
     //操作类别
     const OPERA = ['user' => '用户', 'mer' => '商家', 'plat' => '平台'];
 
+    //交易来源
     const SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城',
     ];
 
+    //类别
     public function typeOption($key = null): array|string|null
     {
         return $key ? (static::TYPE[$key] ?? null) : static::TYPE;
     }
 
+    //来源
     public function sourceOption(): array
     {
         return static::SOURCE;
     }
 
+    //状态
     public function statusOption($key = null): array|string|null
     {
         return !is_null($key) ? (static::STATUS[$key] ?? null) : static::STATUS;
     }
 
+    //渠道别名
     public function channelAs($key): string|null
     {
        $option = $this->channelOption();
         return $option[$key] ?? null;
     }
 
+    //渠道
     public function channelOption($key = null): array|string|null
     {
         return $key ? (static::CHANNEL[$key] ?? null) : static::CHANNEL;
     }
 
+    //操作类别
     public function operaOption($key = null): array|string|null
     {
         return $key ? (static::OPERA[$key] ?? null) : static::OPERA;
@@ -88,15 +93,15 @@ class Payment extends BaseModel
     public function colorOption($key = null): array|string|null
     {
         $data = [
-            '-3' => '#000',
+            '-3' => '#6E1264',
             '-2' => '#ff9326',
             '-1' => '#4096ff',
             '0' => '#cccccc',
             '1' => '#30bf13',
-            '2' => '#000',
-            '3' => '#000',
-            '4' => '#000',
-            '5' => '#000',
+            '2' => '#3495DA',
+            '3' => '#EB4F4C',
+            '4' => '#CF8E63',
+            '5' => '#ECA1C3',
         ];
         return $key ? ($data[$key] ?? null) : $data;
     }
