@@ -21,7 +21,7 @@ class Order extends BaseModel
         'refund_amount' => 'float',
     ];
 
-    protected $appends = ['trade_status_as'];
+    protected $appends = ['trade_status_as', 'trade_color'];
 
     protected $fillable = ['order_id','order_no','base_order_no','order_source','trade_channel','trade_no','trade_amount','trade_status','is_plat','module','mer_id','payer_id','payer'];
 
@@ -92,6 +92,11 @@ class Order extends BaseModel
         return $data;
     }
 
+    public function getTradeColorAttribute(): array|string|null
+    {
+        $model = new Payment;
+        return $model->colorOption($this->trade_status);
+    }
 
 
 }

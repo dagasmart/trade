@@ -70,7 +70,7 @@ class OrderController extends AdminController
                     ->searchable(['name' => 'trade_status', 'type' => 'select', 'options' => $this->service->statusOption(), 'clearable' => true])
                     ->set('type', 'tag')
                     ->set('displayMode', 'rounded')
-                    ->set('color', '${trade_status == 1 ? "#30bf13" : (trade_status == -1 ? "#4096ff" : (trade_status == -2 ? "#ff9326" : "#ccc"))}')
+                    ->set('color', '${trade_color}')
                     ->set('size', 'xs')
                     ->set('static', true),
                 amis()->TableColumn('trade_time', '交易时间')

@@ -16,10 +16,10 @@ class Payment extends BaseModel
     const CODE = ['200' => '成功', '300' => '失败', '400' => '错误'];
 
     //交易类别
-    const TYPE = ['1' => '支付', '2' => '退款'];
+    const TYPE = ['1' => '支付', '2' => '退款', '3' => '结算'];
 
     //交易状态
-    const STATUS = ['0' => '待付款', '1' => '已付款', '-1' => '已退款', '-2' => '部分退款'];
+    const STATUS = ['0' => '待付款', '1' => '已付款', '2' => '已结算', '-1' => '已退款', '-2' => '部分退款'];
 
     //操作类别
     const OPERA = ['user' => '用户', 'mer' => '商家', 'plat' => '平台'];
@@ -95,15 +95,15 @@ class Payment extends BaseModel
         $data = [
             '-3' => '#6E1264',
             '-2' => '#ff9326',
-            '-1' => '#4096ff',
-            '0' => '#cccccc',
+            '-1' => '#ff0000',
+            '0' => '#bbbbbb',
             '1' => '#30bf13',
-            '2' => '#3495DA',
+            '2' => '#4096ff',
             '3' => '#EB4F4C',
             '4' => '#CF8E63',
             '5' => '#ECA1C3',
         ];
-        return $key ? ($data[$key] ?? null) : $data;
+        return !is_null($key) ? ($data[$key] ?? null) : $data;
     }
 
 }

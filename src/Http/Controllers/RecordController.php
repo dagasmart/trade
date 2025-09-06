@@ -3,6 +3,9 @@
 namespace DagaSmart\Trade\Http\Controllers;
 
 use DagaSmart\BizAdmin\Controllers\AdminController;
+use DagaSmart\BizAdmin\Renderers\Form;
+use DagaSmart\BizAdmin\Renderers\Page;
+use DagaSmart\BizAdmin\Support\Cores\AdminPipeline;
 use DagaSmart\Trade\Services\RecordService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,301 +16,105 @@ class RecordController extends AdminController
 {
     protected string $serviceName = RecordService::class;
 
-    public function index(): JsonResponse|JsonResource
+    public function list(): Page
     {
-        $page = $this->basePage()->css($this->css())->body([
-            amis()->Grid()->className('mb-1')->columns([
-                $this->pieChart()->set('md', 4),
-                $this->barChart()->set('md', 8),
-//                amis()->Flex()->items([
-//                    $this->pieChart(),
-//                    $this->pieChart(),
-//                ]),
-            ]),
-            amis()->Grid()->className('mb-1')->columns([
-                $this->barChart()->set('md', 6),
-                $this->pieChart()->set('md', 3),
-                $this->pieChart()->set('md', 3),
-//                amis()->Flex()->items([
-//                    $this->pieChart(),
-//                    $this->pieChart(),
-//                ]),
-            ]),
-            amis()->Grid()->columns([
-                $this->lineChart()->set('md', 8),
-                amis()->Flex()->className('h-full')->items([
-                    $this->clock(),
-                    $this->codeView(),
-                ])->direction('column'),
-            ]),
-        ]);
+        $crud = $this->baseCRUD()
+            ->filterTogglable()
+            ->headerToolbar([
+                amis('reload')->align('right'),
+                amis('filter-toggler')->align('right'),
+            ])
+            ->filter($this->baseFilter()->body([
+                amis()->TextControl('order_no', '订单号')
+                    ->size('md')
+                    ->clearable()
+                    ->placeholder('请输入订单号'),
+                amis()->SelectControl('trade_type', '操作类型')
+                    ->options($this->service->typeOption())
+                    ->clearable(),
+                amis()->SelectControl('trade_channel', '支付渠道')
+                    ->options($this->service->channelOption())
+                    ->clearable(),
+                amis()->SelectControl('trade_status', '交易状态')
+                    ->options($this->service->statusOption())
+                    ->clearable(),
+                amis()->Html()->html('<br>'),
+                amis()->DateRangeControl('trade_time', '操作时间')
+                    ->format('YYYY-MM-DD')
+                    ->clearValueOnHidden()
+            ]))
+            ->autoFillHeight(true)
+            ->columns([
+                amis()->TableColumn('id', 'ID')->sortable()->set('fixed','left'),
+                amis()->TableColumn('order_no', '订单号')
+                    ->searchable(['placeholder' => '请输入订单号', 'clearable' => true])
+                    ->copyable()
+                    ->width(280)
+                    ->set('fixed','left'),
+                amis()->TableColumn('trade_type', '操作类型')
+                    ->searchable(['name' => 'trade_type', 'type' => 'select', 'options' => $this->service->typeOption(), 'clearable' => true])
+                    ->set('type', 'select')
+                    ->set('options', $this->service->typeOption())
+                    ->set('align','center')
+                    ->set('static', true),
+                amis()->TableColumn('trade_channel', '支付渠道')
+                    ->searchable(['name' => 'trade_channel', 'type' => 'select', 'options' => $this->service->channelOption(), 'clearable' => true])
+                    ->set('type', 'input-tag')
+                    ->set('options', $this->service->channelOption())
+                    ->set('align','center')
+                    ->set('static', true),
+                amis()->TableColumn('trade_amount', '交易金额')
+                    ->set('type', 'Tpl')
+                    ->tpl('<span style="color: ${trade_color}">${trade_type == 2 ? "-" : ""}${trade_amount}</span>')
+                    ->width(120),
+                amis()->TableColumn('trade_status_as', '交易状态')
+                    ->searchable(['name' => 'trade_status', 'type' => 'select', 'options' => $this->service->statusOption(), 'clearable' => true])
+                    ->set('type', 'tag')
+                    ->set('displayMode', 'status')
+                    ->set('color', '${trade_color}')
+                    ->set('size', 'xs')
+                    ->set('align','center')
+                    ->set('static', true),
+                amis()->TableColumn('created_at', '操作时间')
+                    ->searchable(['name' => 'trade_time', 'type' => 'input-date-range', 'format' => 'YYYY-MM-DD'])
+                    ->set('width', 150),
+                $this->rowActions([
+                    $this->rowShowButton(true),
+                ])->set('width', 80)->set('align', 'center')->set('fixed', 'right')
+            ]);
 
-        return $this->response()->success($page);
+        return $this->baseList($crud);
     }
 
-    public function codeView()
+    public function detail(): Form
     {
-        return amis()->Panel()->className('h-full clear-card-mb rounded-md')->body([
-            amis()->Markdown()->options(['html' => true, 'breaks' => true])->value(
-                <<<MD
-### __The beginning of everything__
-
-<br>
-
-```php
-<?php
-
-echo 'Hello World';
-```
-MD
-            ),
-        ])->id('code-view-panel')->set('animations', [
-            'enter' => [
-                'delay'    => 0.65,
-                'duration' => 0.5,
-                'type'     => 'fadeInRight',
-            ],
-        ]);
-    }
-
-    public function clock()
-    {
-        /** @noinspection all */
-        $panel = amis()->Panel()->className('h-full bg-blingbling')->body([
-            amis()->Tpl()->tpl('<div class="text-2xl font-bold mb-4">Clock</div>'),
-            amis()->Custom()
-                ->name('clock')
-                ->html('<div id="clock" class="text-4xl"></div><div id="clock-date" class="mt-5"></div>')
-                ->onMount(
-                    <<<JS
-const clock = document.getElementById('clock');
-const tick = () => {
-    clock.innerHTML = (new Date()).toLocaleTimeString();
-    requestAnimationFrame(tick);
-};
-tick();
-
-const clockDate = document.getElementById('clock-date');
-clockDate.innerHTML = (new Date()).toLocaleDateString();
-JS
-
-                ),
-        ]);
-
-        return amis()->Wrapper()->size('none')->className('h-full mb-3')->id('clock-panel')->set('animations', [
-            'enter' => [
-                'delay'    => 0.5,
-                'duration' => 0.5,
-                'type'     => 'fadeInRight',
-            ],
-        ])->body($panel);
-    }
-
-    public function frameworkInfo()
-    {
-        $link = function ($label, $link) {
-            return amis()->Action()
-                ->level('link')
-                ->className('text-lg font-semibold')
-                ->label($label)
-                ->set('blank', true)
-                ->actionType('url')
-                ->link($link);
-        };
-
-        return amis()->Panel()->className('h-96')->body(
-            amis()->Wrapper()->className('h-full')->body([
-                amis()->Flex()
-                    ->className('h-full')
-                    ->direction('column')
-                    ->justify('center')
-                    ->alignItems('center')
-                    ->items([
-                        amis()->Image()->src(url(Admin::config('admin.logo'))),
-                        amis()->Wrapper()->className('text-3xl mt-9 font-bold')->body(Admin::config('admin.name')),
-                        amis()->Flex()->className('w-full mt-5')->justify('center')->items([
-                            $link('代码', 'https://github.com/dagasmart/bizadmin'),
-                            $link('官网', 'https://biz.dagasmart.com'),
-                            $link('文档', 'https://doc.biz.dagasmart.com'),
-                            $link('演示', 'https://demo.biz.dagasmart.com'),
-                        ]),
+        return $this->baseDetail()->title(false)->mode('horizontal')->tabs([
+            // 订单信息
+            amis()->Tab()->title('订单信息')->body([
+                amis()->TextControl('order_no', '订单号'),
+                amis()->GroupControl()->mode('horizontal')->body([
+                    amis()->GroupControl()->direction('vertical')->body([
+                        amis()->RadiosControl('trade_type', '操作类型')
+                            ->options($this->service->typeOption()),
+                        amis()->TagControl('trade_channel', '支付渠道')
+                            ->options($this->service->channelOption()),
+                        amis()->DateTimeControl('created_at', '创建时间'),
+                        amis()->DateTimeControl('updated_at', '更新时间'),
                     ]),
-            ])
-        )->id('framework-info')->set('animations', [
-            'enter' => [
-                'delay'    => 0,
-                'duration' => 0.5,
-                'type'     => 'zoomIn',
-            ],
-        ]);
+                ]),
+            ]),
+            // 交易信息
+            amis()->Tab()->title('交易信息')->body([
+                amis()->RadiosControl('trade_status', '交易状态')
+                    ->options($this->service->statusOption()),
+                amis()->Divider()->title('操作信息'),
+                amis()->GroupControl()->mode('horizontal')->body([
+                    amis()->TextControl('opera.user_id', '操作人ID'),
+                    amis()->TextControl('opera.user_name', '操作人'),
+                ]),
+            ]),
+        ])->static();
     }
 
-    public function pieChart()
-    {
-        return amis()->Panel()->className('w-full h-96')->body([
-            amis()->Chart()->height(350)->config([
-                'backgroundColor' => '',
-                'tooltip'         => ['trigger' => 'item'],
-                'legend'          => ['bottom' => 0, 'left' => 'center'],
-                'series'          => [
-                    [
-                        'name'              => 'Access From',
-                        'type'              => 'pie',
-                        'radius'            => ['40%', '70%'],
-                        'avoidLabelOverlap' => false,
-                        'itemStyle'         => ['borderRadius' => 10, 'borderColor' => '#fff', 'borderWidth' => 2],
-                        'label'             => ['show' => false, 'position' => 'center'],
-                        'emphasis'          => [
-                            'label' => [
-                                'show'       => true,
-                                'fontSize'   => '40',
-                                'fontWeight' => 'bold',
-                            ],
-                        ],
-                        'labelLine'         => ['show' => false],
-                        'data'              => [
-                            ['value' => 1048, 'name' => 'Search Engine'],
-                            ['value' => 735, 'name' => 'Direct'],
-                            ['value' => 580, 'name' => 'Email'],
-                            ['value' => 484, 'name' => 'Union Ads'],
-                            ['value' => 300, 'name' => 'Video Ads'],
-                        ],
-                    ],
-                ],
-            ])
-        ])->id('pie-chart-panel')->set('animations', [
-            'enter' => [
-                'delay'    => 0.1,
-                'duration' => 0.5,
-                'type'     => 'zoomIn',
-            ],
-        ]);
-    }
 
-    public function barChart()
-    {
-        return amis()->Panel()->className('w-full h-96')->body([
-            amis()->Chart()->height(350)->config([
-                'backgroundColor' => '',
-                'title'           => [
-                    'text' => '任务汇总统计',
-                    'subtext' => '统计图'
-                ],
-                'tooltip'         => ['trigger' => 'axis'],
-                'legend'          => ['data' => ['最高气温', '最低气温']],
-                'xAxis'           => [
-                    'type'        => 'category',
-                    'boundaryGap' => false,
-                    'data'        => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                ],
-                'yAxis'           => ['type' => 'value'],
-                'grid'            => ['left' => '7%', 'right' => '3%', 'top' => 60, 'bottom' => 30,],
-                'legend'          => ['data' => ['成功', '失败']],
-                'series'          => [
-                    [
-                        'name'      => '成功',
-                        'data'      => [10,2,30,4,50,16,7],
-                        'type'      => 'line',
-                        'areaStyle' => [],
-                        'smooth'    => true,
-                        'symbol'    => 'none',
-                    ],
-                    [
-                        'name'      => '失败',
-                        'data'      => [7,6,5,4,3,2,1],
-                        'type'      => 'bar',
-                        'areaStyle' => [],
-                        'smooth'    => true,
-                        'symbol'    => 'none',
-                    ],
-                ],
-            ])
-        ])->id('pie-chart-panel')->set('animations', [
-            'enter' => [
-                'delay'    => 0.1,
-                'duration' => 0.5,
-                'type'     => 'zoomIn',
-            ],
-        ]);
-    }
-
-    public function lineChart()
-    {
-        $randArr = function () {
-            $_arr = [];
-            for ($i = 0; $i < 7; $i++) {
-                $_arr[] = rand(50, 200);
-            }
-            return $_arr;
-        };
-
-        $random1 = $randArr();
-        $random2 = $randArr();
-
-        $chart = amis()->Chart()->height(380)->className('h-96')->config([
-            'backgroundColor' => '',
-            'title'           => ['text' => 'Users Behavior'],
-            'tooltip'         => ['trigger' => 'axis'],
-            'xAxis'           => [
-                'type'        => 'category',
-                'boundaryGap' => false,
-                'data'        => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            ],
-            'yAxis'           => ['type' => 'value'],
-            'grid'            => ['left' => '7%', 'right' => '3%', 'top' => 60, 'bottom' => 30,],
-            'legend'          => ['data' => ['Visits', 'Bounce Rate']],
-            'series'          => [
-                [
-                    'name'      => 'Visits',
-                    'data'      => $random1,
-                    'type'      => 'line',
-                    'areaStyle' => [],
-                    'smooth'    => true,
-                    'symbol'    => 'none',
-                ],
-                [
-                    'name'      => 'Bounce Rate',
-                    'data'      => $random2,
-                    'type'      => 'line',
-                    'areaStyle' => [],
-                    'smooth'    => true,
-                    'symbol'    => 'none',
-                ],
-            ],
-        ]);
-
-        return amis()->Panel()->className('clear-card-mb')->body($chart)->id('line-chart-panel')->set('animations', [
-            'enter' => [
-                'delay'    => 0.3,
-                'duration' => 0.5,
-                'type'     => 'zoomIn',
-            ],
-        ]);
-    }
-
-    private function css(): array
-    {
-        /** @noinspection all */
-        return [
-            '.clear-card-mb'                 => [
-                'margin-bottom' => '0 !important',
-            ],
-            '.cxd-Image'                     => [
-                'border' => '0',
-            ],
-            '.bg-blingbling'                 => [
-                'color'             => '#fff',
-                'background'        => 'linear-gradient(to bottom right, #2C3E50, #FD746C, #FF8235, #ffff1c, #92FE9D, #00C9FF, #a044ff, #e73827)',
-                'background-repeat' => 'no-repeat',
-                'background-size'   => '1000% 1000%',
-                'animation'         => 'gradient 60s ease infinite',
-            ],
-            '@keyframes gradient'            => [
-                '0%{background-position:0% 0%} 50%{background-position:100% 100%} 100%{background-position:0% 0%}',
-            ],
-            '.bg-blingbling .cxd-Card-title' => [
-                'color' => '#fff',
-            ],
-        ];
-    }
 }
