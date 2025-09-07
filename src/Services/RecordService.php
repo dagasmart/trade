@@ -153,4 +153,9 @@ class RecordService extends AdminService
         return $res;
     }
 
+    public function statusData()
+    {
+        return $this->getModel()->query()->cursorPaginate(10);
+    }
+
 }

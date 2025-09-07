@@ -141,6 +141,69 @@ class RecordController extends AdminController
                     'yAxis' => ['type' => 'value'],
                     'backgroundColor' => 'rgba(242,234,191,0)',
                     'grid' => ['left' => '5%', 'right' => '0%', 'top' => 60, 'bottom' => 30],
+                ])
+                ->onEvent([
+                    'click' => [
+                        'actions' => [
+                            [
+                                'actionType' => 'dialog',
+                                'dialog' => [
+                                    'title' => '明细',
+                                    'draggable' => true,
+                                    'actions' => [],
+                                    'body' => [
+                                        amis()->Page()->body([
+                                            amis()->CRUDTable()
+                                                ->api(admin_url('trade/record/chart/status/data?page=${page}'))
+                                                ->tableLayout('fixed')
+                                                ->footerToolbar(['pagination'])
+                                                ->autoFillHeight(true)
+                                                ->columns([
+                                                    amis()->TableColumn('trade_status_as', '名称')->align('center'),
+                                                    amis()->TableColumn('created_at', '时间')->align('center'),
+                                                    amis()->TableColumn('trade_amount', '金额')->align('center'),
+                                                ]),
+//                                            amis()
+//                                                ->Service()
+//                                                ->id('service_01')
+//                                                ->api(admin_url('trade/record/chart/status/data?page=${page}'))
+//                                                ->data(['page' => 1, 'bool' => false])
+//                                                ->body([
+//                                                    amis()->Table()
+//                                                        ->title()
+//                                                        ->columns([
+//                                                            amis()->TableColumn('trade_status_as', '名称')->align('center'),
+//                                                            amis()->TableColumn('created_at', '时间')->align('center'),
+//                                                            amis()->TableColumn('trade_amount', '金额')->align('center'),
+//                                                        ]),
+//                                                    amis()->Pagination()
+//                                                        ->activePage('${page}')
+//                                                        //->mode('simple')
+//                                                        ->hasNext('${(page == 2) | boolean}')
+//                                                        ->onEvent([
+//                                                            'change' => [
+//                                                                'actions' => [
+//                                                                    [
+//                                                                        'actionType' => 'setValue',
+//                                                                        'componentId' => 'service_01',
+//                                                                        'args' => [
+//                                                                            'value' => [
+//                                                                                'page' => '${event.data.page}'
+//                                                                            ],
+//                                                                        ],
+//                                                                    ]
+//                                                                ]
+//                                                            ]
+//                                                        ]),
+//                                                ])
+                                        ]),
+
+                                    ],
+
+                                ]
+                            ]
+                        ]
+                    ]
                 ]),
         ])
         ->id('pie-chart-panel')->set('animations', [
@@ -151,6 +214,15 @@ class RecordController extends AdminController
             ],
         ]);
     }
+
+
+
+
+
+
+
+
+
 
     public function pieChart()
     {
@@ -283,6 +355,12 @@ class RecordController extends AdminController
     public function chartData(): JsonResponse
     {
         $res = $this->service->chartData();
+        return $this->response()->success($res);
+    }
+
+    public function statusData(): JsonResponse
+    {
+        $res = $this->service->statusData();
         return $this->response()->success($res);
     }
 

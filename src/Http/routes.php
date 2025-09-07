@@ -29,6 +29,8 @@ Route::group([
     $router->get('order/{id}/log', [Controllers\OrderController::class, 'log']);
     //动态图表
     $router->get('record/chart/data', [Controllers\RecordController::class, 'chartData']);
+    //动态图表
+    $router->get('record/chart/status/data', [Controllers\RecordController::class, 'statusData']);
 
 });
 
