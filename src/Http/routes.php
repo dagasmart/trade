@@ -27,6 +27,9 @@ Route::group([
     $router->put('refund/order/{id}', [Controllers\RefundController::class, 'order']);
     //交易流水
     $router->get('order/{id}/log', [Controllers\OrderController::class, 'log']);
+    //动态图表
+    $router->get('record/chart/data', [Controllers\RecordController::class, 'chartData']);
+
 });
 
 //免登录无限制

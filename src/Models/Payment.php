@@ -93,7 +93,7 @@ class Payment extends BaseModel
     public function colorOption($key = null): array|string|null
     {
         $data = [
-            '-3' => '#6E1264',
+            '-3' => '#00008b',
             '-2' => '#ff9326',
             '-1' => '#ff0000',
             '0' => '#bbbbbb',
