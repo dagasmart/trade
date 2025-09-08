@@ -148,54 +148,33 @@ class RecordController extends AdminController
                             [
                                 'actionType' => 'dialog',
                                 'dialog' => [
-                                    'title' => '明细',
+                                    'title' => '${seriesName}【流水记录】',
                                     'draggable' => true,
                                     'actions' => [],
                                     'body' => [
                                         amis()->Page()->body([
                                             amis()->CRUDTable()
-                                                ->api(admin_url('trade/record/chart/status/data?page=${page}'))
-                                                ->tableLayout('fixed')
-                                                ->footerToolbar(['pagination'])
+                                                ->api(admin_url('trade/record/chart/status/data?page=${page}&date=${name}&name=${seriesName}'))
+                                                ->affixHeader()
+                                                ->filterTogglable()
+                                                ->filterDefaultVisible()
+                                                ->filter(
+                                                    $this->baseFilter()->body([
+                                                        amis()->TextControl('keywords', '订单号')
+                                                            ->placeholder('请输入订单号')
+                                                            ->size('md'),
+                                                    ])
+                                                )
+                                                ->headerToolbar([
+                                                   amis('reload')->align('right'),
+                                                   amis('filter-toggler')->align('right'),
+                                                ])
                                                 ->autoFillHeight(true)
                                                 ->columns([
                                                     amis()->TableColumn('trade_status_as', '名称')->align('center'),
                                                     amis()->TableColumn('created_at', '时间')->align('center'),
                                                     amis()->TableColumn('trade_amount', '金额')->align('center'),
                                                 ]),
-//                                            amis()
-//                                                ->Service()
-//                                                ->id('service_01')
-//                                                ->api(admin_url('trade/record/chart/status/data?page=${page}'))
-//                                                ->data(['page' => 1, 'bool' => false])
-//                                                ->body([
-//                                                    amis()->Table()
-//                                                        ->title()
-//                                                        ->columns([
-//                                                            amis()->TableColumn('trade_status_as', '名称')->align('center'),
-//                                                            amis()->TableColumn('created_at', '时间')->align('center'),
-//                                                            amis()->TableColumn('trade_amount', '金额')->align('center'),
-//                                                        ]),
-//                                                    amis()->Pagination()
-//                                                        ->activePage('${page}')
-//                                                        //->mode('simple')
-//                                                        ->hasNext('${(page == 2) | boolean}')
-//                                                        ->onEvent([
-//                                                            'change' => [
-//                                                                'actions' => [
-//                                                                    [
-//                                                                        'actionType' => 'setValue',
-//                                                                        'componentId' => 'service_01',
-//                                                                        'args' => [
-//                                                                            'value' => [
-//                                                                                'page' => '${event.data.page}'
-//                                                                            ],
-//                                                                        ],
-//                                                                    ]
-//                                                                ]
-//                                                            ]
-//                                                        ]),
-//                                                ])
                                         ]),
 
                                     ],

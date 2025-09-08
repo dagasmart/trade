@@ -25,8 +25,10 @@ class Payment extends BaseModel
     const OPERA = ['user' => '用户', 'mer' => '商家', 'plat' => '平台'];
 
     //交易来源
-    const SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城',
-    ];
+    const SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
+
+    //未知日期
+    const UNDATED = '9999-12-31';
 
     //类别
     public function typeOption($key = null): array|string|null

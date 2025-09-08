@@ -155,7 +155,14 @@ class RecordService extends AdminService
 
     public function statusData()
     {
-        return $this->getModel()->query()->cursorPaginate(10);
+        $name = array_search(request()->name ?? null, Payment::STATUS);
+        $date = request()->date ?? Payment::UNDATED;
+        $perPage = request()->get('perPage', 15);
+        $data = $this->getModel()->query()
+            ->where(['trade_status' => $name])
+            ->whereBetween('created_at', [$date.' 00:00:00', $date.' 23:59:59'])
+            ->paginate($perPage);
+        return ['rows' => $data->items(), 'count' => $data->total()];
     }
 
 }

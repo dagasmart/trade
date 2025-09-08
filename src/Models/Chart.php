@@ -22,15 +22,21 @@ class Chart extends BaseModel
      * 主题1：chalk、customized、dark、essos、essos-bold、infographic、infographic-bold、macarons
      * 主题2：purple-passion、roma、shine、vintage、walden、westeros
      * 主题3：wonderland
-     * @param null $name
+     * @param $name
      * @return mixed
-     * @throws FileException
      */
     public function theme($name = null): mixed
     {
-        $name = $name ?? 'essos';
-        $options = \Ripple\File\File::getContents(admin_chart_path("theme/{$name}.json"));
-        return json_decode($options, true);
+        try {
+            $name = $name ?? 'essos';
+            if (file_exists(admin_chart_path("theme/{$name}.json"))) {
+                $options = \Ripple\File\File::getContents(admin_chart_path("theme/{$name}.json"));
+                return is_json($options) ? json_decode($options, true) : [];
+            }
+            return [];
+        }catch (FileException) {
+            admin_abort("没有找到主题文件：chart/theme/{$name}.json");
+        }
     }
 
 
