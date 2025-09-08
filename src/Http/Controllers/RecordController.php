@@ -146,11 +146,14 @@ class RecordController extends AdminController
                     'click' => [
                         'actions' => [
                             [
-                                'actionType' => 'dialog',
-                                'dialog' => [
+                                'actionType' => 'drawer',
+                                'drawer' => [
                                     'title' => '${seriesName}【流水记录】',
                                     'draggable' => true,
                                     'actions' => [],
+                                    'closeOnOutside' => true,
+                                    'closeOnEsc' => true,
+                                    'size' => 'lg',
                                     'body' => [
                                         amis()->Page()->body([
                                             amis()->CRUDTable()
@@ -171,7 +174,7 @@ class RecordController extends AdminController
                                                 ])
                                                 ->autoFillHeight(true)
                                                 ->columns([
-                                                    amis()->TableColumn('trade_status_as', '名称')->align('center'),
+                                                    amis()->TableColumn('order_no', '订单号')->align('center'),
                                                     amis()->TableColumn('created_at', '时间')->align('center'),
                                                     amis()->TableColumn('trade_amount', '金额')->align('center'),
                                                 ]),
@@ -203,7 +206,7 @@ class RecordController extends AdminController
 
 
 
-    public function pieChart()
+    public function pieChart(): Panel
     {
         return amis()->Panel()->className('w-full h-100')->body([
             amis()->Chart()->config([
@@ -245,7 +248,7 @@ class RecordController extends AdminController
         ]);
     }
 
-    public function barChart($height = null)
+    public function barChart($height = null): Panel
     {
         return amis()->Panel()->className('w-full h-100')->body([
             amis()->Chart()->height($height)->config([
