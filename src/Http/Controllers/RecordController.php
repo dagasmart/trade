@@ -178,9 +178,12 @@ class RecordController extends AdminController
                                                 ->columns([
                                                     amis()->TableColumn('order_no', '订单号')->searchable()->copyable()->align('center'),
                                                     amis()->TableColumn('created_at', '时间')->align('center'),
-                                                    amis()->TableColumn('trade_amount', '金额')->align('center'),
+                                                    amis()->TableColumn('trade_amount', '金额')
+                                                        ->set('type', 'Tpl')
+                                                        ->tpl('<span style="color:${trade_color}">${trade_type == 2 ? "-" : ""}${trade_amount}</span>')
+                                                        ->align('center'),
                                                     $this->rowActions([
-                                                        $this->rowShowButton(true)->hiddenOn('${trade_status==0}')->permission('log'),
+                                                        $this->rowLogButton('drawer')->hiddenOn('${trade_status==0}')->permission('log'),
                                                     ])->set('width', 80)->set('align', 'center')->set('fixed', 'right')
                                                 ]),
                                         ]),
@@ -201,15 +204,6 @@ class RecordController extends AdminController
             ],
         ]);
     }
-
-
-
-
-
-
-
-
-
 
     public function pieChart(): Panel
     {
@@ -337,6 +331,76 @@ class RecordController extends AdminController
                 'type'     => 'zoomIn',
             ],
         ]);
+    }
+
+    protected function rowLogButton(bool|string $dialog = false, string $dialogSize = 'md', string $title = '', string $position = 'left')
+    {
+        $title  = $title ?: admin_trans('admin.show');
+        $action = amis()->LinkAction()->link($this->getShowPath());
+        if ($dialog) {
+            if ($dialog === 'drawer') {
+                $action = amis()->DrawerAction()->drawer(
+                    amis()
+                        ->Drawer()
+                        ->title(false)
+                        ->body($this->logForm('$id'))
+                        ->position($position)
+                        ->size($dialogSize)
+                        ->actions([])
+                        ->closeOnEsc()
+                        ->closeOnOutside()
+                );
+            } else {
+                $action = amis()->DialogAction()->dialog(
+                    amis()
+                        ->Dialog()
+                        ->title(false)
+                        ->body($this->logForm('$id'))
+                        ->size($dialogSize)
+                        ->actions([])
+                        ->closeOnEsc()
+                        ->closeOnOutside()
+                );
+            }
+        }
+        $action->label($title)->level('link');
+        return AdminPipeline::handle(AdminPipeline::PIPE_SHOW_ACTION, $action);
+    }
+
+    public function logForm(): Form
+    {
+        return $this->baseDetail()->mode('horizontal')->tabs([
+            // 流水信息
+            amis()->Tab()->title('流水信息')->body([
+                amis()->TextControl('trade_id', '交易id'),
+                amis()->TextControl('order_no', '订单号'),
+                amis()->GroupControl()->mode('horizontal')->body([
+                    amis()->GroupControl()->direction('vertical')->body([
+                        amis()->RadiosControl('trade_type', '操作类型')
+                            ->options($this->service->typeOption()),
+                        amis()->TagControl('trade_channel', '支付渠道')
+                            ->options($this->service->channelOption()),
+                        amis()->TextControl('trade_amount', '${trade_type==1 ? "支付" : "退款"}金额'),
+                        amis()->DateTimeControl('created_at', '创建时间'),
+                        amis()->DateTimeControl('updated_at', '更新时间'),
+                    ]),
+                ]),
+            ]),
+            // 交易记录
+            amis()->Tab()->title('交易记录')->body([
+                amis()->TextControl('order_no', '订单号'),
+                amis()->GroupControl()->mode('horizontal')->body([
+                    amis()->GroupControl()->direction('vertical')->body([
+                        amis()->RadiosControl('trade_type', '操作类型')
+                            ->options($this->service->typeOption()),
+                        amis()->TagControl('trade_channel', '支付渠道')
+                            ->options($this->service->channelOption()),
+                        amis()->DateTimeControl('created_at', '创建时间'),
+                        amis()->DateTimeControl('updated_at', '更新时间'),
+                    ]),
+                ]),
+            ]),
+        ])->static();
     }
 
     public function chartData(): JsonResponse
