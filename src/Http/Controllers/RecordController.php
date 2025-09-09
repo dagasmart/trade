@@ -157,15 +157,17 @@ class RecordController extends AdminController
                                     'body' => [
                                         amis()->Page()->body([
                                             amis()->CRUDTable()
-                                                ->api(admin_url('trade/record/chart/status/data?page=${page}&date=${name}&name=${seriesName}'))
+                                                ->api(admin_url('trade/record/chart/status/data'))
                                                 ->affixHeader()
                                                 ->filterTogglable()
                                                 ->filterDefaultVisible()
                                                 ->filter(
                                                     $this->baseFilter()->body([
-                                                        amis()->TextControl('keywords', '订单号')
+                                                        amis()->TextControl('order_no', '订单号')
                                                             ->placeholder('请输入订单号')
-                                                            ->size('md'),
+                                                            ->size('lg'),
+                                                        amis()->HiddenControl('keywords.time')->value('${name}'),
+                                                        amis()->HiddenControl('keywords.status')->value('${seriesName}'),
                                                     ])
                                                 )
                                                 ->headerToolbar([
@@ -174,7 +176,7 @@ class RecordController extends AdminController
                                                 ])
                                                 ->autoFillHeight(true)
                                                 ->columns([
-                                                    amis()->TableColumn('order_no', '订单号')->align('center'),
+                                                    amis()->TableColumn('order_no', '订单号')->searchable()->copyable()->align('center'),
                                                     amis()->TableColumn('created_at', '时间')->align('center'),
                                                     amis()->TableColumn('trade_amount', '金额')->align('center'),
                                                     $this->rowActions([

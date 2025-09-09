@@ -153,14 +153,20 @@ class RecordService extends AdminService
         return $res;
     }
 
-    public function statusData()
+    public function statusData(): array
     {
-        $name = array_search(request()->name ?? null, Payment::STATUS);
-        $date = request()->date ?? Payment::UNDATED;
-        $perPage = request()->get('perPage', 15);
+        $keywords = request()->keywords;
+        $status = array_search($keywords['status'] ?? null, Payment::STATUS);
+        $trade_status = in_array($status, ['-1','-2']) ? ['-1','-2'] : [$status];
+        $query_time = $keywords['time'] ?? Payment::UNDATED;
+        $perPage = request()->perPage ?? 15;
+        $order_no = request()->order_no ?? null;
         $data = $this->getModel()->query()
-            ->where(['trade_status' => $name])
-            ->whereBetween('created_at', [$date.' 00:00:00', $date.' 23:59:59'])
+            ->when($order_no, function ($query) use ($order_no) {
+                return $query->where('order_no', 'like', "%$order_no%");
+            })
+            ->whereIn('trade_status', $trade_status)
+            ->whereBetween('created_at', [$query_time . ' 00:00:00', $query_time . ' 23:59:59'])
             ->paginate($perPage);
         return ['rows' => $data->items(), 'count' => $data->total()];
     }
