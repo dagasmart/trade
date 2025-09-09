@@ -177,6 +177,9 @@ class RecordController extends AdminController
                                                     amis()->TableColumn('order_no', '订单号')->align('center'),
                                                     amis()->TableColumn('created_at', '时间')->align('center'),
                                                     amis()->TableColumn('trade_amount', '金额')->align('center'),
+                                                    $this->rowActions([
+                                                        $this->rowShowButton(true),
+                                                    ])->set('width', 80)->set('align', 'center')->set('fixed', 'right')->hiddenOn('${seriesName=="待付款"}')
                                                 ]),
                                         ]),
 
