@@ -90,7 +90,7 @@ class RecordService extends AdminService
                 CURRENT_DATE,  -- 结束日期
                 '1 day'::interval    -- 间隔
             )::DATE AS days) a
-            LEFT JOIN trade_order_log b ON a.days = b.created_at::date
+            LEFT JOIN trade_record b ON a.days = b.created_at::date
             GROUP BY a.days
             ORDER BY a.days
         ";

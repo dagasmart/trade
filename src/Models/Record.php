@@ -11,7 +11,7 @@ use DagaSmart\BizAdmin\Models\BaseModel;
 class Record extends BaseModel
 {
 
-    protected $table = 'trade_order_log';
+    protected $table = 'trade_record';
 
     protected $primaryKey = 'id';
 

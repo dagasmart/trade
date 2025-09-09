@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    private string $table = 'trade_order_log';
+    private string $table = 'trade_record';
 
     /**
      * 执行迁移
