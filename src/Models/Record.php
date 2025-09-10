@@ -3,6 +3,7 @@
 namespace DagaSmart\Trade\Models;
 
 use DagaSmart\BizAdmin\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 /**
@@ -34,6 +35,12 @@ class Record extends BaseModel
     {
         $model = new Payment;
         return $model->colorOption($this->trade_status);
+    }
+
+    //流水交易记录
+    public function log(): HasMany
+    {
+        return $this->hasMany(Log::class, 'record_id', 'id');
     }
 
 

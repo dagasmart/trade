@@ -30,6 +30,21 @@ class RecordService extends AdminService
     }
 
     /**
+     * 关联查询
+     * @param $query
+     * @param string $scene
+     * @return void
+     */
+    public function addRelations($query, string $scene = 'detail'): void
+    {
+        parent::addRelations($query);
+        $query->with(['log' => function ($query) {
+            $query->orderBy('created_at','desc');
+        }]);
+    }
+
+    /**
+     * 支付网关模式
      * @return array
      */
     public function modeOption(): array
@@ -161,7 +176,7 @@ class RecordService extends AdminService
         $query_time = $keywords['time'] ?? Payment::UNDATED;
         $perPage = request()->perPage ?? 15;
         $order_no = request()->order_no ?? null;
-        $data = $this->getModel()->query()
+        $data = $this->getModel()->with('log')
             ->when($order_no, function ($query) use ($order_no) {
                 return $query->where('order_no', 'like', "%$order_no%");
             })

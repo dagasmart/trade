@@ -335,7 +335,7 @@ class RecordController extends AdminController
 
     protected function rowLogButton(bool|string $dialog = false, string $dialogSize = 'md', string $title = '', string $position = 'left')
     {
-        $title  = $title ?: admin_trans('admin.show');
+        $title  = $title ?: '交易记录';
         $action = amis()->LinkAction()->link($this->getShowPath());
         if ($dialog) {
             if ($dialog === 'drawer') {
@@ -345,6 +345,8 @@ class RecordController extends AdminController
                         ->title(false)
                         ->body($this->logForm('$id'))
                         ->position($position)
+                        ->resizable()
+                        ->width(550)
                         ->size($dialogSize)
                         ->actions([])
                         ->closeOnEsc()
@@ -372,7 +374,8 @@ class RecordController extends AdminController
         return $this->baseDetail()->mode('horizontal')->tabs([
             // 流水信息
             amis()->Tab()->title('流水信息')->body([
-                amis()->TextControl('trade_id', '交易id'),
+                amis()->TextControl('id', '流水ID'),
+                amis()->TextControl('trade_id', '交易ID'),
                 amis()->TextControl('order_no', '订单号'),
                 amis()->GroupControl()->mode('horizontal')->body([
                     amis()->GroupControl()->direction('vertical')->body([
@@ -380,25 +383,33 @@ class RecordController extends AdminController
                             ->options($this->service->typeOption()),
                         amis()->TagControl('trade_channel', '支付渠道')
                             ->options($this->service->channelOption()),
-                        amis()->TextControl('trade_amount', '${trade_type==1 ? "支付" : "退款"}金额'),
+                        amis()->TextControl('trade_amount', '${trade_type==1 ? "付款" : "退款"}金额'),
                         amis()->DateTimeControl('created_at', '创建时间'),
                         amis()->DateTimeControl('updated_at', '更新时间'),
                     ]),
                 ]),
             ]),
             // 交易记录
-            amis()->Tab()->title('交易记录')->body([
-                amis()->TextControl('order_no', '订单号'),
-                amis()->GroupControl()->mode('horizontal')->body([
-                    amis()->GroupControl()->direction('vertical')->body([
-                        amis()->RadiosControl('trade_type', '操作类型')
-                            ->options($this->service->typeOption()),
-                        amis()->TagControl('trade_channel', '支付渠道')
-                            ->options($this->service->channelOption()),
-                        amis()->DateTimeControl('created_at', '创建时间'),
-                        amis()->DateTimeControl('updated_at', '更新时间'),
-                    ]),
-                ]),
+            amis()->Tab()->title('${trade_type==1 ? "付款" : "退款"}记录')->body([
+                amis()->Page()->body([
+                    amis()->Table()
+                        ->source('${log}')
+                        ->affixHeader()
+                        ->width('auto')
+                        ->autoFillHeight(true)
+                        ->columns([
+                            amis()->TableColumn('trade_state', '状态')
+                                ->set('type','tag')
+                                ->set('displayMode','status')
+                                ->set('color', '${trade_code_color}')
+                                ->width(100)
+                                ->value('${trade_type==1 ? "付款" : "退款"}${trade_code_as}'),
+                            amis()->TableColumn('trade_result', '${trade_type==1 ? "付款" : "退款"}结果')
+                                ->align('center')
+                                ->type('property')
+                                ->items('${trade_result_items}'),
+                        ]),
+                ])
             ]),
         ])->static();
     }
