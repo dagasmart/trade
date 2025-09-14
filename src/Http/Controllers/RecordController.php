@@ -183,7 +183,7 @@ class RecordController extends AdminController
                                                         ->tpl('<span style="color:${trade_color}">${trade_type == 2 ? "-" : ""}${trade_amount}</span>')
                                                         ->align('center'),
                                                     $this->rowActions([
-                                                        $this->rowLogButton('drawer')->hiddenOn('${trade_status==0}')->permission('log'),
+                                                        $this->rowLogButton('drawer')->hiddenOn('${trade_status==0}'),
                                                     ])->set('width', 80)->set('align', 'center')->set('fixed', 'right')
                                                 ]),
                                         ]),
@@ -333,9 +333,8 @@ class RecordController extends AdminController
         ]);
     }
 
-    protected function rowLogButton(bool|string $dialog = false, string $dialogSize = 'md', string $title = '', string $position = 'left')
+    protected function rowLogButton(bool|string $dialog = false, string $dialogSize = 'md', string $title = '交易记录', string $position = 'left')
     {
-        $title  = $title ?: '交易记录';
         $action = amis()->LinkAction()->link($this->getShowPath());
         if ($dialog) {
             if ($dialog === 'drawer') {

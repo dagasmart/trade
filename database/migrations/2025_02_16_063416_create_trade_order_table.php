@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->integer('order_id')->comment('订单id');
                 $table->string('order_no',64)->comment('订单号');
                 $table->string('base_order_no',64)->nullable()->comment('原始订单号');
-                $table->string('order_source',20)->nullable()->comment('订单来源：shop商城，soft软件，recharge充值');
+                $table->string('order_source',20)->nullable()->comment('订单来自：shop商城，soft软件，recharge充值');
                 $table->decimal('order_amount')->nullable()->default(0)->comment('订单金额');
                 //$table->tinyInteger('trade_type')->default(1)->comment('交易类型：1支付，2退款');
                 $table->string('trade_channel',20)->nullable()->comment('交易渠道：alipay支付宝、wechat微信、douyin抖音、unipay银联');
@@ -37,13 +37,15 @@ return new class extends Migration
                 $table->string('trade_code',10)->nullable()->comment('交易码：10000-支付成功');
                 $table->jsonb('trade_result')->nullable()->comment('交易结果');
                 $table->tinyInteger('is_plat')->default(0)->comment('是否平台订单');
+                $table->string('from_module', 50)->nullable()->comment('来自模块');
+                $table->bigInteger('from_mer_id')->nullable()->comment('来自商户');
                 $table->bigInteger('payer_id')->comment('付款人id');
                 $table->json('payer')->comment('付款人信息');
 
                 $table->string('module', 50)->nullable()->comment('模块');
                 $table->bigInteger('mer_id')->nullable()->comment('商户id');
 
-                $table->index(['id','order_id','order_no','base_order_no','trade_no','trade_time']);
+                $table->index(['id','order_id','order_no','base_order_no','trade_no','trade_time','from_module','from_mer_id','module','mer_id']);
                 $table->unique(['order_no']);
 
                 $table->timestamps();

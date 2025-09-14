@@ -42,7 +42,7 @@ class ChartService extends AdminService
 
     public function boxplot()
     {
-
+        dump(11);
     }
 
 }

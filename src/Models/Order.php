@@ -34,9 +34,10 @@ class Order extends BaseModel
 
     /**
      * 订单回写
+     * @param $data
      * @return void
      */
-    public function feedback($data)
+    public function feedback($data): void
     {
         if ($data) {
             if (is_object($data)) {
