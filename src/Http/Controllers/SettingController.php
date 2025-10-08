@@ -3,6 +3,7 @@
 namespace DagaSmart\Trade\Http\Controllers;
 
 use DagaSmart\BizAdmin\Controllers\AdminController;
+use DagaSmart\BizAdmin\Renderers\Form;
 use DagaSmart\Trade\Services\TradeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -42,7 +43,7 @@ class SettingController extends AdminController
         return $this->response()->success($page);
     }
 
-    public function form()
+    public function form(): Form
     {
         return $this->baseForm(true)
             ->redirect('')
@@ -70,29 +71,34 @@ class SettingController extends AdminController
                                             amis()->TextControl('payment.alipay.default.app_id','商户号')
                                                 ->description('必填，-支付宝分配的 app_id')
                                                 ->labelRemark('提示：服务商模式下为服务商户号')
-                                                ->size('lg'),
+                                                ->size('lg')
+                                                ->required(false),
                                             amis()->TextareaControl('payment.alipay.default.app_secret_cert','商户秘钥')
                                                 ->description('必填，应用私钥，字符串或路径 app_secret_cert')
                                                 ->maxRows(12)
                                                 ->minRows(12)
-                                                ->size(),
+                                                ->size()
+                                                ->required(false),
                                         ]),
                                         amis()->Tab()->title('支付证书')->body([
                                             amis()->FileControl('payment.alipay.default.app_public_cert_path','应用公钥证书')
                                                 ->description('必填，应用公钥证书 路径 appCertPublicKey')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
-                                                ->size('lg'),
+                                                ->size('lg')
+                                                ->required(false),
                                             amis()->FileControl('payment.alipay.default.alipay_public_cert_path','支付宝公钥证书')
                                                 ->description('必填，支付宝公钥证书 路径 alipayCertPublicKey_RSA2')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
-                                                ->size('lg'),
+                                                ->size('lg')
+                                                ->required(false),
                                             amis()->FileControl('payment.alipay.default.alipay_root_cert_path','支付宝根证书')
                                                 ->description('必填，支付宝根证书 路径 alipayRootCert')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
-                                                ->size('lg'),
+                                                ->size('lg')
+                                                ->required(false),
                                         ]),
                                         amis()->Tab()->title('支付回调')->body([
                                             amis()->TextControl('payment.alipay.default.return_url','同步回调地址')
@@ -275,7 +281,7 @@ class SettingController extends AdminController
                                     ]),
                                 ]),
                             ])->className(['p-10' => true]),
-                        ]),
+                        ])->disabled()->disabledOn('${!payment.switch}'),
                     ])->value('payment'),
                 ])->toolbar([
                     amis()->SwitchControl('payment.switch')
