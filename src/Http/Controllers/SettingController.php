@@ -26,10 +26,7 @@ class SettingController extends AdminController
                 ->closeButtonClassName(['text-xs'=>true])
                 ->style([
                     'padding' => '1rem',
-                    'color' => 'var(--colors-brand-6)',
-                    'border-style' => 'dashed',
-                    'border-color' => 'var(--colors-brand-6)',
-                    'background-color' => 'var(--Tree-item-onChekced-bg)',
+                    'borderStyle' => 'dashed',
                     'opacity' => 0.65,
                 ])->body("
                     注意事项：
