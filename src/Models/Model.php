@@ -1,0 +1,30 @@
+<?php
+
+namespace DagaSmart\Trade\Models;
+
+use DagaSmart\BizAdmin\Models\BaseModel;
+use DagaSmart\BizAdmin\Scopes\ActiveScope;
+
+/**
+ *基座模型
+ */
+class Model extends BaseModel
+{
+
+    const ?string schema = null; //空值默认数据库
+
+    public function __construct()
+    {
+        if (!empty(self::schema)) {
+            $this->setConnection(self::schema);
+        }
+        parent::__construct();
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new ActiveScope(self::schema));
+        parent::booted();
+    }
+
+}

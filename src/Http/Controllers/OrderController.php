@@ -2,7 +2,6 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
-use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\BizAdmin\Renderers\Form;
 use DagaSmart\BizAdmin\Renderers\Page;
 use DagaSmart\BizAdmin\Support\Cores\AdminPipeline;
@@ -18,9 +17,9 @@ class OrderController extends AdminController
         $crud = $this->baseCRUD()
             ->filterTogglable()
             ->headerToolbar([
-                amis('reload')->align('right'),
-                amis('filter-toggler')->align('right'),
+                ...$this->baseHeaderToolBar()
             ])
+            ->bulkActions(false)
             ->filter($this->baseFilter()->body([
                 amis()->TextControl('order_no', '订单号')
                     ->size('md')

@@ -2,14 +2,11 @@
 
 namespace DagaSmart\Trade\Models;
 
-use DagaSmart\BizAdmin\Models\BaseModel;
-use Ripple\File\Exception\FileException;
-
 
 /**
  * 图表模型
  */
-class Chart extends BaseModel
+class Chart extends Model
 {
 
     public function config()
@@ -22,20 +19,23 @@ class Chart extends BaseModel
      * 主题1：chalk、customized、dark、essos、essos-bold、infographic、infographic-bold、macarons
      * 主题2：purple-passion、roma、shine、vintage、walden、westeros
      * 主题3：wonderland
-     * @param $name
-     * @return mixed
+     * @param string|null $name
+     * @return array|null
      */
-    public function theme($name = null): mixed
+    public function theme(?string $name = null): ?array
     {
         try {
             $name = $name ?? 'essos';
-            if (file_exists(admin_chart_path("theme/{$name}.json"))) {
-                $options = \Ripple\File\File::getContents(admin_chart_path("theme/{$name}.json"));
+            $file = admin_chart_path("theme/{$name}.json");
+            if (file_exists($file)) {
+                $fs = fopen($file, "r");
+                $options = fread($fs, filesize($file));
+                fclose($fs);
                 return is_json($options) ? json_decode($options, true) : [];
             }
             return [];
-        }catch (FileException) {
-            admin_abort("没有找到主题文件：chart/theme/{$name}.json");
+        } catch (\Throwable $e) {
+            admin_abort("文件读取失败: " . $e->getMessage());
         }
     }
 

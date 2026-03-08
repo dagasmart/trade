@@ -2,7 +2,6 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
-use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\StatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

@@ -2,7 +2,6 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
-use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\NotifyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +17,19 @@ class NotifyController extends AdminController
     {
         parent::__construct();
         $this->service = $service;
+    }
+
+    /**
+     * Handle an incoming request.
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function handle(Request $request): mixed
+    {
+        //支付通道，alipay|wechat|unipay|douyin
+        $channel = $request['channel'];
+        return $this->$channel($request);
     }
 
     public function alipay(Request $request)

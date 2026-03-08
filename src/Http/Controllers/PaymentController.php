@@ -3,7 +3,6 @@
 namespace DagaSmart\Trade\Http\Controllers;
 
 use App\Library\Aes;
-use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\PaymentService;
 use ErrorException;
 use Illuminate\Http\JsonResponse;

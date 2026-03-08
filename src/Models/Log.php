@@ -2,13 +2,11 @@
 
 namespace DagaSmart\Trade\Models;
 
-use DagaSmart\BizAdmin\Models\BaseModel;
-
 
 /**
  * 交易记录模型
  */
-class Log extends BaseModel
+class Log extends Model
 {
 
     protected $table = 'trade_log';
@@ -37,8 +35,8 @@ class Log extends BaseModel
         return $model->codeColorOption($this->trade_code);
     }
 
-        public function getTradeResultItemsAttribute()
-    {
+        public function getTradeResultItemsAttribute(): array
+        {
         $data = [];
         $items = $this->trade_result;
         if ($items && is_array($items)) {

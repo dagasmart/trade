@@ -2,7 +2,6 @@
 
 namespace DagaSmart\Trade\Services;
 
-use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Order;
 use DagaSmart\Trade\Models\Record;
 use ErrorException;

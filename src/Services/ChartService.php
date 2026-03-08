@@ -2,7 +2,6 @@
 
 namespace DagaSmart\Trade\Services;
 
-use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Chart;
 
 

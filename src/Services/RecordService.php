@@ -3,7 +3,6 @@
 namespace DagaSmart\Trade\Services;
 
 use Carbon\Carbon;
-use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Chart;
 use DagaSmart\Trade\Models\Payment;
 use DagaSmart\Trade\Models\Record;
@@ -70,7 +69,7 @@ class RecordService extends AdminService
         return $model->statusOption();
     }
 
-    public function config()
+    public function config(): null
     {
         $chart = new Chart;
         return $chart->config();
