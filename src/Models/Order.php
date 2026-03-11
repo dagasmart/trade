@@ -2,11 +2,13 @@
 
 namespace DagaSmart\Trade\Models;
 
+use DagaSmart\BizAdmin\Models\BaseModel;
+
 
 /**
  * 订单模型
  */
-class Order extends Model
+class Order extends BaseModel
 {
 
     protected $table = 'trade_order';

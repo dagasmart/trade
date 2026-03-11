@@ -2,13 +2,14 @@
 
 namespace DagaSmart\Trade\Models;
 
+use DagaSmart\BizAdmin\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 /**
  * 交易流水模型
  */
-class Record extends Model
+class Record extends BaseModel
 {
 
     protected $table = 'trade_record';

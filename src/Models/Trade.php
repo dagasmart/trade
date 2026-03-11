@@ -2,21 +2,22 @@
 
 namespace DagaSmart\Trade\Models;
 
+use DagaSmart\BizAdmin\Models\BaseModel;
 use Yansongda\Pay\Pay;
 
 
 /**
  * 交易模型
  */
-class Trade extends Model
+class Trade extends BaseModel
 {
 
     //正常模式
-    const int MODE_NORMAL = Pay::MODE_NORMAL;
+    const MODE_NORMAL = Pay::MODE_NORMAL;
     //沙箱模式
-    const int MODE_SANDBOX = Pay::MODE_SANDBOX;
+    const MODE_SANDBOX = Pay::MODE_SANDBOX;
     //服务商模式
-    const int MODE_SERVICE = Pay::MODE_SERVICE;
+    const MODE_SERVICE = Pay::MODE_SERVICE;
 
 
     public function modeOption(): array

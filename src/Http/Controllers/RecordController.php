@@ -2,6 +2,7 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
+use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\BizAdmin\Renderers\Form;
 use DagaSmart\BizAdmin\Renderers\Page;
 use DagaSmart\BizAdmin\Renderers\Panel;
@@ -131,16 +132,22 @@ class RecordController extends AdminController
     public function getChartData(): Panel
     {
         return amis()->Panel()->className('w-full h-100')->body([
-            amis()->Chart()
+            amis()->Service()
                 ->api(admin_url('trade/record/chart/data'))
-                ->interval(30000)
+                ->interval(5000)
+                ->silentPolling(true)
+                ->body([
+                    amis()->Chart()
+                        ->source('${option | json}')
+                        ->trackExpression('${option|json}')
+                        ->chartTheme($this->service->theme())
+                ]),
+
+
+            amis()->Chart()
+                ->api(admin_url('trade/record/chart/data?option=true'))
+                ->interval(3000)
                 ->chartTheme($this->service->theme())
-                ->config([
-                    'xAxis' => ['type' => 'category'],
-                    'yAxis' => ['type' => 'value'],
-                    'backgroundColor' => 'rgba(242,234,191,0)',
-                    'grid' => ['left' => '5%', 'right' => '0%', 'top' => 60, 'bottom' => 30],
-                ])
                 ->onEvent([
                     'click' => [
                         'actions' => [
@@ -415,7 +422,12 @@ class RecordController extends AdminController
     public function chartData(): JsonResponse
     {
         $res = $this->service->chartData();
-        return $this->response()->success($res);
+        if (request('option')) {
+            $data = $res['option'] ?? [];
+        } else {
+            $data = $res ?? [];
+        }
+        return $this->response()->success($data);
     }
 
     public function statusData(): JsonResponse

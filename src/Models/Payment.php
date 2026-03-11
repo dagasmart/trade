@@ -2,34 +2,36 @@
 
 namespace DagaSmart\Trade\Models;
 
+use DagaSmart\BizAdmin\Models\BaseModel;
+
 
 /**
  * 支付模型
  */
-class Payment extends Model
+class Payment extends BaseModel
 {
     //交易渠道
-    const array CHANNEL = ['alipay' => '支付宝', 'wechat' => '微信支付', 'douyin' => '抖音支付', 'unipay' => '银联支付'];
+    const CHANNEL = ['alipay' => '支付宝', 'wechat' => '微信支付', 'douyin' => '抖音支付', 'unipay' => '银联支付'];
 
-    const array STATE = ['200' => '成功', '300' => '失败', '400' => '错误'];
+    const STATE = ['200' => '成功', '300' => '失败', '400' => '错误'];
 
     //退/付款状态
-    const array CODE = ['10000' => '成功', '10003' => '创建', '20000' => '超时', '40004' => '失败', '40006' => '异常'];
+    const CODE = ['10000' => '成功', '10003' => '创建', '20000' => '超时', '40004' => '失败', '40006' => '异常'];
 
     //交易类别
-    const array TYPE = ['1' => '支付', '2' => '退款', '3' => '结算'];
+    const TYPE = ['1' => '支付', '2' => '退款', '3' => '结算'];
 
     //交易状态
-    const array STATUS = ['0' => '待付款', '1' => '已付款', '2' => '已结算', '-1' => '已退款', '-2' => '部分退款'];
+    const STATUS = ['0' => '待付款', '1' => '已付款', '2' => '已结算', '-1' => '已退款', '-2' => '部分退款'];
 
     //操作类别
-    const array OPERA = ['user' => '用户', 'mer' => '商家', 'plat' => '平台'];
+    const OPERA = ['user' => '用户', 'mer' => '商家', 'plat' => '平台'];
 
     //交易来源
-    const array SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
+    const SOURCE = ['soft' => '软件', 'recharge' => '充值', 'shop' => '商城'];
 
     //未知日期
-    const string UNDATED = '9999-12-31';
+    const UNDATED = '9999-12-31';
 
     //类别
     public function typeOption($key = null): array|string|null
@@ -86,20 +88,20 @@ class Payment extends Model
 
     /**
      * 交易订单来源
-     * @param string|null $key
+     * @param null $key
      * @return array|string|null
      */
-    public function source(?string $key = null): array|string|null
+    public function source($key = null): array|string|null
     {
         return $key ? (static::SOURCE[$key] ?? null) : static::SOURCE;
     }
 
     /**
      * 颜色标记
-     * @param string|null $key
+     * @param null $key
      * @return array|string|null
      */
-    public function colorOption(?string $key = null): array|string|null
+    public function colorOption($key = null): array|string|null
     {
         $data = [
             '-3' => '#00008b',
@@ -117,10 +119,10 @@ class Payment extends Model
 
     /**
      * code颜色标记
-     * @param string|null $key
+     * @param null $key
      * @return array|string|null
      */
-    public function codeColorOption(?string $key = null): array|string|null
+    public function codeColorOption($key = null): array|string|null
     {
         $data = [
             '10000' => '#30bf13',

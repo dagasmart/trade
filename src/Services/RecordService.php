@@ -3,6 +3,7 @@
 namespace DagaSmart\Trade\Services;
 
 use Carbon\Carbon;
+use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Chart;
 use DagaSmart\Trade\Models\Payment;
 use DagaSmart\Trade\Models\Record;
@@ -69,7 +70,7 @@ class RecordService extends AdminService
         return $model->statusOption();
     }
 
-    public function config(): null
+    public function config()
     {
         $chart = new Chart;
         return $chart->config();
@@ -96,12 +97,15 @@ class RecordService extends AdminService
         $sql = "
             SELECT
             a.days
-            ,sum(case when b.id is not null AND b.trade_status=0 then trade_amount else 0 end) as nopay
-            ,sum(case when b.id is not null AND b.trade_status=1 then trade_amount else 0 end) as payed
-            ,sum(case when b.id is not null AND b.trade_status in('-1','-2') then trade_amount else 0 end) as refund
+            -- ,sum(case when b.id is not null AND b.trade_status=0 then trade_amount else 0 end) as nopay
+            -- ,sum(case when b.id is not null AND b.trade_status=1 then trade_amount else 0 end) as payed
+            -- ,sum(case when b.id is not null AND b.trade_status in('-1','-2') then trade_amount else 0 end) as refund
+            ,floor(random() * (100 - 1 + 1)) + 1 as nopay
+            ,floor(random() * (100 - 1 + 1)) + 1 as payed
+            ,floor(random() * (100 - 1 + 1)) + 1 as refund
             FROM (SELECT generate_series(
-                CURRENT_DATE - 6,  -- 开始日期
-                CURRENT_DATE,  -- 结束日期
+                CURRENT_DATE - 188,  -- 开始日期
+                CURRENT_DATE - 182,  -- 结束日期
                 '1 day'::interval    -- 间隔
             )::DATE AS days) a
             LEFT JOIN trade_record b ON a.days = b.created_at::date
@@ -139,7 +143,8 @@ class RecordService extends AdminService
             ];
         }
         $colors = ['#4a66c9','#F44336','#E91E63','#9C27B0','#673AB7','#3F51B5','#2196F3'];
-        $res = [
+        $res['option'] = [
+            'backgroundColor' => 'rgba(255,255,255,0)',
             'title' => [
                 'text' => '近7日实时交易流水'
             ],
@@ -156,13 +161,15 @@ class RecordService extends AdminService
                 'data' => array_column($series, 'name')
             ],
             'xAxis' => [
+                'type' => 'category',
                 'data' => $days
             ],
-            'yAxis' => [],
+            'yAxis' => ['type' => 'value'],
             'series' => $series,
             'itemStyle' => [
                 'borderRadius' => [50, 5, 0, 0],
-            ]
+            ],
+            'grid' => ['left' => '5%', 'right' => '0%', 'top' => 60, 'bottom' => 30],
         ];
         return $res;
     }

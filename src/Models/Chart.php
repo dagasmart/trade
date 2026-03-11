@@ -2,11 +2,13 @@
 
 namespace DagaSmart\Trade\Models;
 
+use DagaSmart\BizAdmin\Models\BaseModel;
+use Illuminate\Support\Facades\File;
 
 /**
  * 图表模型
  */
-class Chart extends Model
+class Chart extends BaseModel
 {
 
     public function config()
@@ -20,24 +22,20 @@ class Chart extends Model
      * 主题2：purple-passion、roma、shine、vintage、walden、westeros
      * 主题3：wonderland
      * @param string|null $name
-     * @return array|null
+     * @return mixed
      */
-    public function theme(?string $name = null): ?array
+    public function theme(?string $name = null): mixed
     {
+        $name = $name ?? 'essos';
         try {
-            $name = $name ?? 'essos';
-            $file = admin_chart_path("theme/{$name}.json");
-            if (file_exists($file)) {
-                $fs = fopen($file, "r");
-                $options = fread($fs, filesize($file));
-                fclose($fs);
+            if (File::exists(admin_chart_path("theme/{$name}.json"))) {
+                $options = File::get(admin_chart_path("theme/{$name}.json"));
                 return is_json($options) ? json_decode($options, true) : [];
             }
             return [];
-        } catch (\Throwable $e) {
-            admin_abort("文件读取失败: " . $e->getMessage());
+        }catch (\Exception) {
+            admin_abort("没有找到主题文件：chart/theme/{$name}.json");
         }
     }
-
 
 }

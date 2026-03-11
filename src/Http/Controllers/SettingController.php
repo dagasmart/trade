@@ -2,7 +2,7 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
-use DagaSmart\BizAdmin\Renderers\Form;
+use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\Trade\Services\TradeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,7 +26,6 @@ class SettingController extends AdminController
                 ->style([
                     'padding' => '1rem',
                     'borderStyle' => 'dashed',
-                    'opacity' => 0.65,
                 ])->body("
                     注意事项：
                     </br>商户私钥 必须严格保密，切勿泄露。
@@ -39,7 +38,7 @@ class SettingController extends AdminController
         return $this->response()->success($page);
     }
 
-    public function form(): Form
+    public function form()
     {
         return $this->baseForm(true)
             ->redirect('')
@@ -54,12 +53,10 @@ class SettingController extends AdminController
                             amis()->Tab()->title('支付宝')->body([
                                 amis()->Alert()
                                     ->showIcon()
+                                    ->showCloseButton()
                                     ->style([
                                         'padding' => '1rem',
-                                        'color' => 'var(--colors-brand-6)',
-                                        'border-style' => 'dashed',
-                                        'border-color' => 'var(--colors-brand-6)',
-                                        'background-color' => 'var(--Tree-item-onChekced-bg)',
+                                        'borderStyle' => 'dashed',
                                     ])->body("支付宝小程序、移动端必须关联支付宝商户，否则支付无效"),
                                 amis()->GroupControl()->body([
                                     amis()->Tabs()->tabsMode('line')->tabs([
@@ -67,34 +64,29 @@ class SettingController extends AdminController
                                             amis()->TextControl('payment.alipay.default.app_id','商户号')
                                                 ->description('必填，-支付宝分配的 app_id')
                                                 ->labelRemark('提示：服务商模式下为服务商户号')
-                                                ->size('lg')
-                                                ->required(false),
+                                                ->size('lg'),
                                             amis()->TextareaControl('payment.alipay.default.app_secret_cert','商户秘钥')
                                                 ->description('必填，应用私钥，字符串或路径 app_secret_cert')
                                                 ->maxRows(12)
                                                 ->minRows(12)
-                                                ->size()
-                                                ->required(false),
+                                                ->size(),
                                         ]),
                                         amis()->Tab()->title('支付证书')->body([
                                             amis()->FileControl('payment.alipay.default.app_public_cert_path','应用公钥证书')
                                                 ->description('必填，应用公钥证书 路径 appCertPublicKey')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
-                                                ->size('lg')
-                                                ->required(false),
+                                                ->size('lg'),
                                             amis()->FileControl('payment.alipay.default.alipay_public_cert_path','支付宝公钥证书')
                                                 ->description('必填，支付宝公钥证书 路径 alipayCertPublicKey_RSA2')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
-                                                ->size('lg')
-                                                ->required(false),
+                                                ->size('lg'),
                                             amis()->FileControl('payment.alipay.default.alipay_root_cert_path','支付宝根证书')
                                                 ->description('必填，支付宝根证书 路径 alipayRootCert')
                                                 ->receiver(admin_url('upload_cert?channel=alipay'))
                                                 ->accept('.crt')
-                                                ->size('lg')
-                                                ->required(false),
+                                                ->size('lg'),
                                         ]),
                                         amis()->Tab()->title('支付回调')->body([
                                             amis()->TextControl('payment.alipay.default.return_url','同步回调地址')
@@ -125,12 +117,10 @@ class SettingController extends AdminController
                             amis()->Tab()->title('微信支付')->mode('normal')->body([
                                 amis()->Alert()
                                     ->showIcon()
+                                    ->showCloseButton()
                                     ->style([
                                         'padding' => '1rem',
-                                        'color' => 'var(--colors-brand-6)',
-                                        'border-style' => 'dashed',
-                                        'border-color' => 'var(--colors-brand-6)',
-                                        'background-color' => 'var(--Tree-item-onChekced-bg)',
+                                        'borderStyle' => 'dashed',
                                     ])->body("微信小程序、公众号、移动端必须关联微信支付，否则支付无效"),
                                 amis()->GroupControl()->body([
                                     amis()->Tabs()->tabsMode('line')->tabs([
@@ -185,12 +175,10 @@ class SettingController extends AdminController
                             amis()->Tab()->title('抖音支付')->mode('normal')->body([
                                 amis()->Alert()
                                     ->showIcon()
+                                    ->showCloseButton()
                                     ->style([
                                         'padding' => '1rem',
-                                        'color' => 'var(--colors-brand-6)',
-                                        'border-style' => 'dashed',
-                                        'border-color' => 'var(--colors-brand-6)',
-                                        'background-color' => 'var(--Tree-item-onChekced-bg)',
+                                        'borderStyle' => 'dashed',
                                     ])->body("抖音支付只支持抖音小程序"),
                                 amis()->GroupControl()->body([
                                     amis()->Tabs()->tabsMode('line')->tabs([
@@ -232,12 +220,10 @@ class SettingController extends AdminController
                             amis()->Tab()->title('银联支付')->mode('normal')->body([
                                 amis()->Alert()
                                     ->showIcon()
+                                    ->showCloseButton()
                                     ->style([
                                         'padding' => '1rem',
-                                        'color' => 'var(--colors-brand-6)',
-                                        'border-style' => 'dashed',
-                                        'border-color' => 'var(--colors-brand-6)',
-                                        'background-color' => 'var(--Tree-item-onChekced-bg)',
+                                        'borderStyle' => 'dashed',
                                     ])->body("银联支付必须开通银联商户，否则支付无效"),
                                 amis()->GroupControl()->mode('horizontal')->body([
                                     amis()->Tabs()->tabsMode('line')->tabs([
@@ -277,7 +263,7 @@ class SettingController extends AdminController
                                     ]),
                                 ]),
                             ])->className(['p-10' => true]),
-                        ])->disabled()->disabledOn('${!payment.switch}'),
+                        ]),
                     ])->value('payment'),
                 ])->toolbar([
                     amis()->SwitchControl('payment.switch')

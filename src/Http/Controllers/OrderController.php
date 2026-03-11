@@ -2,6 +2,7 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
+use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\BizAdmin\Renderers\Form;
 use DagaSmart\BizAdmin\Renderers\Page;
 use DagaSmart\BizAdmin\Support\Cores\AdminPipeline;
@@ -17,9 +18,9 @@ class OrderController extends AdminController
         $crud = $this->baseCRUD()
             ->filterTogglable()
             ->headerToolbar([
-                ...$this->baseHeaderToolBar()
+                amis('reload')->align('right'),
+                amis('filter-toggler')->align('right'),
             ])
-            ->bulkActions(false)
             ->filter($this->baseFilter()->body([
                 amis()->TextControl('order_no', '订单号')
                     ->size('md')
@@ -270,11 +271,9 @@ class OrderController extends AdminController
         return $this->baseForm()->body([
             amis()->Alert()
                 ->showIcon()
+                ->showCloseButton()
                 ->style([
-                    'color' => 'var(--colors-brand-6)',
                     'borderStyle' => 'dashed',
-                    'borderColor' => 'var(--colors-brand-6)',
-                    'backgroundColor' => 'var(--Tree-item-onChekced-bg)',
                 ])
                 ->body('提示：<br>退款成功后资金将无法追回,为避免产生纠纷和损失,请谨慎操作'),
             amis()->HiddenControl('id', 'ID')->static(),
