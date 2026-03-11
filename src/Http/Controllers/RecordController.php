@@ -134,7 +134,7 @@ class RecordController extends AdminController
         return amis()->Panel()->className('w-full h-100')->body([
             amis()->Service()
                 ->api(admin_url('trade/record/chart/data'))
-                ->interval(5000)
+                ->interval(random_int(4000,5000))
                 ->silentPolling(true)
                 ->body([
                     amis()->Chart()
@@ -144,63 +144,63 @@ class RecordController extends AdminController
                 ]),
 
 
-            amis()->Chart()
-                ->api(admin_url('trade/record/chart/data?option=true'))
-                ->interval(3000)
-                ->chartTheme($this->service->theme())
-                ->onEvent([
-                    'click' => [
-                        'actions' => [
-                            [
-                                'actionType' => 'drawer',
-                                'drawer' => [
-                                    'title' => '${seriesName}【流水记录】',
-                                    'draggable' => true,
-                                    'actions' => [],
-                                    'closeOnOutside' => true,
-                                    'closeOnEsc' => true,
-                                    'size' => 'lg',
-                                    'body' => [
-                                        amis()->Page()->body([
-                                            amis()->CRUDTable()
-                                                ->api(admin_url('trade/record/chart/status/data'))
-                                                ->affixHeader()
-                                                ->filterTogglable()
-                                                ->filterDefaultVisible()
-                                                ->filter(
-                                                    $this->baseFilter()->body([
-                                                        amis()->TextControl('order_no', '订单号')
-                                                            ->placeholder('请输入订单号')
-                                                            ->size('lg'),
-                                                        amis()->HiddenControl('keywords.time')->value('${name}'),
-                                                        amis()->HiddenControl('keywords.status')->value('${seriesName}'),
-                                                    ])
-                                                )
-                                                ->headerToolbar([
-                                                   amis('reload')->align('right'),
-                                                   amis('filter-toggler')->align('right'),
-                                                ])
-                                                ->autoFillHeight(true)
-                                                ->columns([
-                                                    amis()->TableColumn('order_no', '订单号')->searchable()->copyable()->align('center'),
-                                                    amis()->TableColumn('created_at', '时间')->align('center'),
-                                                    amis()->TableColumn('trade_amount', '金额')
-                                                        ->set('type', 'Tpl')
-                                                        ->tpl('<span style="color:${trade_color}">${trade_type == 2 ? "-" : ""}${trade_amount}</span>')
-                                                        ->align('center'),
-                                                    $this->rowActions([
-                                                        $this->rowLogButton('drawer')->hiddenOn('${trade_status==0}'),
-                                                    ])->set('width', 80)->set('align', 'center')->set('fixed', 'right')
-                                                ]),
-                                        ]),
-
-                                    ],
-
-                                ]
-                            ]
-                        ]
-                    ]
-                ]),
+//            amis()->Chart()
+//                ->api(admin_url('trade/record/chart/data?option=true'))
+//                ->interval(3000)
+//                ->chartTheme($this->service->theme())
+//                ->onEvent([
+//                    'click' => [
+//                        'actions' => [
+//                            [
+//                                'actionType' => 'drawer',
+//                                'drawer' => [
+//                                    'title' => '${seriesName}【流水记录】',
+//                                    'draggable' => true,
+//                                    'actions' => [],
+//                                    'closeOnOutside' => true,
+//                                    'closeOnEsc' => true,
+//                                    'size' => 'lg',
+//                                    'body' => [
+//                                        amis()->Page()->body([
+//                                            amis()->CRUDTable()
+//                                                ->api(admin_url('trade/record/chart/status/data'))
+//                                                ->affixHeader()
+//                                                ->filterTogglable()
+//                                                ->filterDefaultVisible()
+//                                                ->filter(
+//                                                    $this->baseFilter()->body([
+//                                                        amis()->TextControl('order_no', '订单号')
+//                                                            ->placeholder('请输入订单号')
+//                                                            ->size('lg'),
+//                                                        amis()->HiddenControl('keywords.time')->value('${name}'),
+//                                                        amis()->HiddenControl('keywords.status')->value('${seriesName}'),
+//                                                    ])
+//                                                )
+//                                                ->headerToolbar([
+//                                                   amis('reload')->align('right'),
+//                                                   amis('filter-toggler')->align('right'),
+//                                                ])
+//                                                ->autoFillHeight(true)
+//                                                ->columns([
+//                                                    amis()->TableColumn('order_no', '订单号')->searchable()->copyable()->align('center'),
+//                                                    amis()->TableColumn('created_at', '时间')->align('center'),
+//                                                    amis()->TableColumn('trade_amount', '金额')
+//                                                        ->set('type', 'Tpl')
+//                                                        ->tpl('<span style="color:${trade_color}">${trade_type == 2 ? "-" : ""}${trade_amount}</span>')
+//                                                        ->align('center'),
+//                                                    $this->rowActions([
+//                                                        $this->rowLogButton('drawer')->hiddenOn('${trade_status==0}'),
+//                                                    ])->set('width', 80)->set('align', 'center')->set('fixed', 'right')
+//                                                ]),
+//                                        ]),
+//
+//                                    ],
+//
+//                                ]
+//                            ]
+//                        ]
+//                    ]
+//                ]),
         ])
         ->id('pie-chart-panel')->set('animations', [
             'enter' => [
