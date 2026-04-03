@@ -2,14 +2,13 @@
 
 namespace DagaSmart\Trade\Models;
 
-use DagaSmart\BizAdmin\Models\BaseModel;
 use Yansongda\Pay\Pay;
 
 
 /**
  * 交易模型
  */
-class Trade extends BaseModel
+class Trade extends Model
 {
 
     //正常模式

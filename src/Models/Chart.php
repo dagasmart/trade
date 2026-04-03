@@ -2,13 +2,12 @@
 
 namespace DagaSmart\Trade\Models;
 
-use DagaSmart\BizAdmin\Models\BaseModel;
 use Illuminate\Support\Facades\File;
 
 /**
  * 图表模型
  */
-class Chart extends BaseModel
+class Chart extends Model
 {
 
     public function config()

@@ -2,7 +2,6 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
-use DagaSmart\BizAdmin\Controllers\AdminController;
 
 class TradeController extends AdminController
 {

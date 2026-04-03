@@ -2,13 +2,12 @@
 
 namespace DagaSmart\Trade\Models;
 
-use DagaSmart\BizAdmin\Models\BaseModel;
 
 
 /**
  * 交易记录模型
  */
-class Log extends BaseModel
+class Log extends Model
 {
 
     protected $table = 'trade_log';

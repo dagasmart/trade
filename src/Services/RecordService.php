@@ -3,7 +3,6 @@
 namespace DagaSmart\Trade\Services;
 
 use Carbon\Carbon;
-use DagaSmart\BizAdmin\Services\AdminService;
 use DagaSmart\Trade\Models\Chart;
 use DagaSmart\Trade\Models\Payment;
 use DagaSmart\Trade\Models\Record;

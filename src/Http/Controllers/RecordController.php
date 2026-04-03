@@ -2,7 +2,6 @@
 
 namespace DagaSmart\Trade\Http\Controllers;
 
-use DagaSmart\BizAdmin\Controllers\AdminController;
 use DagaSmart\BizAdmin\Renderers\Form;
 use DagaSmart\BizAdmin\Renderers\Page;
 use DagaSmart\BizAdmin\Renderers\Panel;

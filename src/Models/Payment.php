@@ -2,13 +2,11 @@
 
 namespace DagaSmart\Trade\Models;
 
-use DagaSmart\BizAdmin\Models\BaseModel;
-
 
 /**
  * 支付模型
  */
-class Payment extends BaseModel
+class Payment extends Model
 {
     //交易渠道
     const CHANNEL = ['alipay' => '支付宝', 'wechat' => '微信支付', 'douyin' => '抖音支付', 'unipay' => '银联支付'];
