@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Routing\Router;
+use DagaSmart\Trade\Http\Middleware;
 use Illuminate\Support\Facades\Route;
 use DagaSmart\Trade\Http\Controllers;
 use DagaSmart\BizAdmin\Middleware\Permission;
@@ -10,6 +11,9 @@ use DagaSmart\BizAdmin\Middleware\Authenticate;
 //需登录与鉴权
 Route::group([
     'prefix'     => 'trade',
+    'middleware' => [
+        Middleware\Middleware::class,
+    ],
 ], function (Router $router) {
     //交易订单
     $router->resource('order', Controllers\OrderController::class);
