@@ -160,6 +160,14 @@ class SettingController extends AdminController
                                                 ->description('必填，公众号秘钥secret_key')
                                                 ->size('lg'),
                                         ]),
+                                        amis()->Tab()->title('服务号')->body([
+                                            amis()->TextControl('payment.wechat.default.we_app_id','服务号 app_id')
+                                                ->description('选填，服务号的app_id')
+                                                ->size('lg'),
+                                            amis()->TextControl('payment.wechat.default.we_secret_key','服务号秘钥')
+                                                ->description('必填，服务号秘钥secret_key')
+                                                ->size('lg'),
+                                        ]),
                                         amis()->Tab()->title('移动端')->body([
                                             amis()->TextControl('payment.wechat.default.app_id','app移动端')
                                                 ->description('选填，app移动终端的 app_id')
