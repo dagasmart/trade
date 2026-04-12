@@ -12,11 +12,11 @@ class Trade extends Model
 {
 
     //正常模式
-    const MODE_NORMAL = Pay::MODE_NORMAL;
+    const int MODE_NORMAL = Pay::MODE_NORMAL;
     //沙箱模式
-    const MODE_SANDBOX = Pay::MODE_SANDBOX;
+    const int MODE_SANDBOX = Pay::MODE_SANDBOX;
     //服务商模式
-    const MODE_SERVICE = Pay::MODE_SERVICE;
+    const int MODE_SERVICE = Pay::MODE_SERVICE;
 
 
     public function modeOption(): array
