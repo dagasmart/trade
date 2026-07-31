@@ -126,9 +126,9 @@ JS
                         amis()->Wrapper()->className('text-3xl mt-9 font-bold')->body(Admin::config('admin.name')),
                         amis()->Flex()->className('w-full mt-5')->justify('center')->items([
                             $link('代码', 'https://github.com/dagasmart/bizadmin'),
-                            $link('官网', 'https://biz.dagasmart.com'),
-                            $link('文档', 'https://doc.biz.dagasmart.com'),
-                            $link('演示', 'https://demo.biz.dagasmart.com'),
+                            $link('官网', 'https://extension.dagasmart.com'),
+                            $link('文档', 'https://doc.extension.dagasmart.com'),
+                            $link('演示', 'https://demo.extension.dagasmart.com'),
                         ]),
                     ]),
             ])
